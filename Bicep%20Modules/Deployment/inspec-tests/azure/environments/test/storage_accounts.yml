@@ -1,0 +1,6 @@
+- name: satestaediags01
+  resource_group: rg-test-ae-storage
+- name: satestaefile01
+  resource_group: rg-test-ae-storage
+- name: satestasediags01
+  resource_group: rg-test-ase-storage

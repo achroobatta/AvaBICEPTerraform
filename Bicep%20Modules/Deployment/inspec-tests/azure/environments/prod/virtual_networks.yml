@@ -1,0 +1,8 @@
+- name: vn-prod-ae-hub-01
+  resource_group: rg-prod-ae-network
+  address_space: 10.10.0.0/16
+  location: australiaeast
+- name: vn-prod-ase-hub-01
+  resource_group: rg-prod-ase-network
+  address_space: 10.11.0.0/16
+  location: australiasoutheast

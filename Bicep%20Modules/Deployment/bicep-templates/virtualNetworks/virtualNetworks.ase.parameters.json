@@ -1,0 +1,58 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vnetObject": {
+            "value": { 
+                "vnet":[
+                    {
+                      "name": "hub-01",
+                      "addressPrefixes": [
+                          "10.11.0.0/16"
+                      ],
+                      "dnsServers": ["10.10.1.4","10.10.1.5"],
+                      "subnets": [
+                              {
+                                "name": "GatewaySubnet",
+                                "addressPrefix": "10.11.0.0/26",
+                                "privateEndpointNetworkPolicies": "disabled",
+                                "privateLinkServiceNetworkPolicies": "disabled",
+                                "builtin": true
+                              },
+                              {
+                                "name": "AzureFirewallSubnet",
+                                "addressPrefix": "10.11.0.64/26",
+                                "privateEndpointNetworkPolicies": "disabled",
+                                "privateLinkServiceNetworkPolicies": "disabled",
+                                "builtin": true
+                              },
+                              {
+                                "name": "AzureBastionSubnet",
+                                "addressPrefix": "10.11.128.0/26",
+                                "privateEndpointNetworkPolicies": "disabled",
+                                "privateLinkServiceNetworkPolicies": "disabled",
+                                "builtin": true
+                              },
+                              {
+                                "name": "pki-01",
+                                "addressPrefix": "10.11.1.0/24",
+                                "privateEndpointNetworkPolicies": "disabled",
+                                "privateLinkServiceNetworkPolicies": "disabled",
+                                "nsgName": "pki-01",
+                                "builtin": false
+                              },
+                              {
+                                "name": "dc-01",
+                                "addressPrefix": "10.11.2.0/24",
+                                "privateEndpointNetworkPolicies": "disabled",
+                                "privateLinkServiceNetworkPolicies": "disabled",
+                                "nsgName": "dc-01",
+                                "builtin": false
+                              }
+                          ]
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+parameters:
+- name: environmentType
+  type: string
+- name: hubServiceConnection
+  type: string
+- name: serviceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+- stage: ${{parameters.stageName}}
+  jobs:
+  # Resource Groups
+    - template: ../jobs/deploy-azureFirewalls.yml
+      parameters:
+        serviceConnection: ${{parameters.serviceConnection}}
+        hubserviceConnection: ${{parameters.serviceConnection}} #firewall is deployed to same subscription as the hub 
+        environmentType: ${{parameters.environmentType}}
+        vgs: ../vgs/global.yml
+        resourceType: azureFirewalls
+        job: ${{parameters.stageName}}_RGs_AustraliaEast
+        location: AustraliaEast
+        scope: group

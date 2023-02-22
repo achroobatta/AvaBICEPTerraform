@@ -1,0 +1,40 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: keyVaultName
+    type: string
+  - name: tenantId
+    type: string
+  - name: objectId
+    type: string
+
+steps:    
+  - template: components/deploy-key-vault.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-keyVaultName "${{parameters.keyVaultName}}" -tenantId "${{parameters.tenantId}}"'
+
+  - template: components/deploy-key-vault-secrets.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-keyVaultName "${{parameters.keyVaultName}}"'
+
+  - template: components/deploy-key-vault-accessPolicy.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-keyVaultName "${{parameters.keyVaultName}}" -tenantId "${{parameters.tenantId}}" -objectId "${{parameters.objectId}}"'

@@ -1,0 +1,8 @@
+- name: vn-test-ae-hub-01
+  resource_group: rg-test-ae-network
+  address_space: 10.10.0.0/16
+  location: australiaeast
+- name: vn-test-ase-hub-01
+  resource_group: rg-test-ase-network
+  address_space: 10.11.0.0/16
+  location: australiasoutheast

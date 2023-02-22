@@ -1,0 +1,412 @@
+{
+  "$Schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "$contentVersion": "1.0.0.0",
+  "parameters": {
+    "nsgObject": {
+      "value": {
+        "nsg": [
+          {
+            "name": "dc-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": [
+              {
+                "name": "Allow-NTP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound NTP from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "123",
+                  "access": "Allow",
+                  "priority": 300,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-RPC-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound RPD from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "135",
+                  "access": "Allow",
+                  "priority": 301,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-RPC-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound RPC from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "135",
+                  "access": "Allow",
+                  "priority": 302,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-NetBiosName-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound NetBIOS from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "137",
+                  "access": "Allow",
+                  "priority": 303,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-NetBiosName-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound NetBiosName from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "137",
+                  "access": "Allow",
+                  "priority": 304,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-NetBiosDatagram-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound NetBiosDatagram from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "138",
+                  "access": "Allow",
+                  "priority": 305,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-NetBiosSession-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound NetBiosSession from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "139",
+                  "access": "Allow",
+                  "priority": 306,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-SMB-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound SMB from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "445",
+                  "access": "Allow",
+                  "priority": 307,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-SMB-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound SMB from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "445",
+                  "access": "Allow",
+                  "priority": 308,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-Kerberos-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound Kerberos from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "464",
+                  "access": "Allow",
+                  "priority": 309,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-Kerberos-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound Kerberos from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "464",
+                  "access": "Allow",
+                  "priority": 310,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-LDAP-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound LDAP from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "389",
+                  "access": "Allow",
+                  "priority": 311,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-LDAP-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound LDAP from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "389",
+                  "access": "Allow",
+                  "priority": 312,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-LDAPSSL-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound LDAPSSL from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "636",
+                  "access": "Allow",
+                  "priority": 313,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-GlobalCatalogue-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound GlobalCatalogue from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "3268",
+                  "access": "Allow",
+                  "priority": 314,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-GlobalCatalogue-SSL-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound GlobalCatalogue from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "3269",
+                  "access": "Allow",
+                  "priority": 315,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-KerberosAuth-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound KerberosAuth from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "88",
+                  "access": "Allow",
+                  "priority": 316,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-KerberosAuth-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound KerberosAuth from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "88",
+                  "access": "Allow",
+                  "priority": 317,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-DNS-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound DNS from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "53",
+                  "access": "Allow",
+                  "priority": 318,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-DNS-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound DNS from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "53",
+                  "access": "Allow",
+                  "priority": 319,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-DynamicPorts-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound DynamicPorts from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "49152-65535",
+                  "access": "Allow",
+                  "priority": 320,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-ADManagementGatewayService-TCP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound ADManagementGatewayService from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "9389",
+                  "access": "Allow",
+                  "priority": 322,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-DynamicPorts-UDP-From-VDC-To-DomainController",
+                "properties": {
+                  "description": "Allow inbound DynamicPorts from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "8389",
+                  "access": "Allow",
+                  "priority": 323,
+                  "direction": "Inbound"
+                }
+              }
+            ]
+          },
+          {
+            "name": "pki-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": [
+              {
+                "name": "Allow-SMB-TCP-From-VDC-To-FileShare",
+                "properties": {
+                  "description": "Allow inbound SMB from the company's IP address range.",
+                  "protocol": "Tcp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "445",
+                  "access": "Allow",
+                  "priority": 307,
+                  "direction": "Inbound"
+                }
+              },
+              {
+                "name": "Allow-SMB-UDP-From-VDC-To-FileShare",
+                "properties": {
+                  "description": "Allow inbound SMB from the company's IP address range.",
+                  "protocol": "Udp",
+                  "sourceAddressPrefix": "10.0.0.0/8",
+                  "sourcePortRange": "*",
+                  "destinationAddressPrefix": "VirtualNetwork",
+                  "destinationPortRange": "445",
+                  "access": "Allow",
+                  "priority": 308,
+                  "direction": "Inbound"
+                }
+              }
+            ]
+          },
+          {
+            "name": "exc-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          },
+          {
+            "name": "sccm-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          },
+          {
+            "name": "sailpoint-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          },
+          {
+            "name": "paw-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          },
+          {
+            "name": "ansible-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          },
+          {
+            "name": "accelerate-01",
+            "enableFlowLogs": true,
+            "flowLogsStorageRetention": 7,
+            "rules": []
+          }
+        ]
+      }
+    }
+  }
+}

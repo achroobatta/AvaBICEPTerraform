@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "roleDefinitionObject": {
+            "value":{
+                "roleDefinition":[
+                {
+                    "roleName": "Custom JIT for VM access",
+                    "description": "Custom JIT for VM access",
+                    "actions": [
+                        "Microsoft.Security/locations/jitNetworkAccessPolicies/initiate/action",
+                        "Microsoft.Security/locations/jitNetworkAccessPolicies/*/read",
+                        "Microsoft.Compute/virtualMachines/read",
+                        "Microsoft.Network/networkInterfaces/*/read",
+                        "Microsoft.Network/publicIPAddresses/read"
+                    ],
+                    "notActions": [],
+                    "assignableScopes": [
+                        "/providers/Microsoft.Management/managementGroups/48aaa2b2-67f4-47d4-a8f1-b9b6197d9b23"
+                    ]
+                }
+                ]
+            }
+
+        }
+    }
+}
+
+  

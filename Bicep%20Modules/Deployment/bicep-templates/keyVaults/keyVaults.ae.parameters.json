@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultObject": {
+            "value":{
+                "keyVault":[
+                {
+                    "name" : "sec-15",
+                    "sku": "standard",
+                    "publicNetworkAccess": "Enabled",
+                    "vmPasswordSafe": true,
+                    "softDeleteRetentionInDays": 7,
+                    "keyvaultAdministrator": "39787235-6e5a-48ce-8ecd-fd578dd84b38",
+                    "keyvaultReader": "11fab6e9-a251-4918-bbf1-577356b2eac6"
+                }
+                ]
+            }
+
+        }
+    }
+}

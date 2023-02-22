@@ -1,0 +1,11 @@
+name: Windows Server Tests
+title: Windows Server Tests
+maintainer: Andrew McGregor
+copyright: a.mcgregor@avanoso.com
+copyright_email: a.mcgregor@avanoso.com
+license: Apache-2.0
+summary: An InSpec Compliance Profile Windows Server
+version: 0.1.0
+inspec_version: '>= 2.2.7'
+supports:
+  platform: windows

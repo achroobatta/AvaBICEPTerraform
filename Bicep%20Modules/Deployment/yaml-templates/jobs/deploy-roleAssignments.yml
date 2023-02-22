@@ -1,0 +1,44 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: resourceType
+    type: string
+  - name: job
+    type: string
+  - name: scope
+    type: string
+  - name: jobDependsOn
+    type: string
+  - name: location
+    type: string
+  - name: spokeIndex
+    type: string
+    default: ''
+
+  jobs:
+    - job: ${{parameters.job}}
+      dependsOn: ${{parameters.jobDependsOn}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+            spokeIndex: ${{parameters.spokeIndex}} # Spoke numeric identifier
+      steps:
+      - task: AzureCLI@2 # Deploy roles assignments for the resource groups
+        displayName: Role Assignments ${{parameters.location}}
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >
+            az deployment ${{parameters.scope}} create 
+            --name ${{parameters.resourceType}}$(deployDate)
+            --resource-group ${{variables.securityGroup}}
+            --template-file Deployment/bicep-templates/${{parameters.resourceType}}/${{parameters.resourceType}}.bicep 
+            --parameters Deployment/bicep-templates/${{parameters.resourceType}}/${{parameters.resourceType}}.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "rgPrefix="${{variables.rgPrefix}}

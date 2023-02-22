@@ -1,0 +1,28 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: circuitName
+    type: string  
+   
+steps:
+- template: deploy-erCktCreate.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-circuitName "${{parameters.circuitName}}"'
+
+- template: deploy-erPvtPeering.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-circuitName "${{parameters.circuitName}}"'    

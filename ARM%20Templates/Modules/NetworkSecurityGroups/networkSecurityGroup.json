@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create an Azure network security group resource."
+  },
+  "parameters": {
+    "nsgName": {
+      "type": "String",
+      "metadata": {
+        "description": "(required) The name of the network security group."
+      }
+    },
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-04-01",
+      "name": "[parameters('nsgName')]",
+      "location": "[variables('location')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "properties": {}
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgName'))]"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+- name: vn-dev-ae-hub-01
+  resource_group: rg-dev-ae-network
+  address_space: 10.10.0.0/16
+  location: australiaeast
+- name: vn-dev-ase-hub-01
+  resource_group: rg-dev-ase-network
+  address_space: 10.11.0.0/16
+  location: australiasoutheast

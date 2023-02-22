@@ -1,0 +1,222 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "activityLogAlertsObject": {
+            "value":{
+                "activityLogAlerts":[
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure VM Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Compute/virtualMachines/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure SQL Database Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Sql/servers/databases/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "type": "Administrative",
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure SQL Server Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Sql/servers/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "type": "Administrative",
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Virtual Network Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Network/virtualNetworks/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "type": "Administrative",
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Virtual Network Gateway Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Network/virtualNetworkGateways/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Firewall Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Network/azureFirewalls/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Bastion Host Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Network/bastionHosts/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Storage Account Deleted",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "Administrative"
+                            },
+                            {
+                                "field": "operationName",
+                                "equals": "Microsoft.Storage/storageAccounts/delete"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Service Health Alert",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "ServiceHealth"
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "properties.incidentType",
+                                        "equals": "Incident"
+                                    },
+                                    {
+                                        "field": "properties.incidentType",
+                                        "equals": "Security"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": true,
+                        "actionGroupName":  "emailReceiver",
+                        "name": "Azure Resource Health Alert",
+                        "scopes":  "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3",
+                        "conditions":[
+                            {
+                                "field": "category",
+                                "equals": "ResourceHealth"
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "properties.currentHealthStatus",
+                                        "equals": "Degraded"
+                                    },
+                                    {
+                                        "field": "properties.currentHealthStatus",
+                                        "equals": "Unavailable"
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "properties.previousHealthStatus",
+                                        "equals": "Available"
+                                    },
+                                    {
+                                        "field": "properties.previousHealthStatus",
+                                        "equals": "Unknown"
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "status",
+                                        "equals": "Active"
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "properties.cause",
+                                        "equals": "Unknown"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+
+        }
+    }
+}
+
+  

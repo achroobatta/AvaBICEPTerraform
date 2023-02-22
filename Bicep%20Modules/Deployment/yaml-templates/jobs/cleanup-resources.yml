@@ -1,0 +1,36 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: job
+    type: string
+  - name: location
+    type: string
+
+  jobs:
+    - job: ${{parameters.job}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+      steps: 
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: 'Get-InstalledModule -Name Az'
+
+      - task: AzurePowerShell@5
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'inlineScript'
+          azurePowerShellVersion: latestVersion #required or you get - throw ("Could not find the module path with given versio...
+          #only remove computer RGs and firewall as these cost $$$
+          inline: |
+            get-azfirewall  | remove-azfirewall -force
+            get-azbastion  | remove-azbastion -force
+            Get-AzVirtualNetworkGateway -resourceGroupName rg-${{parameters.environmentType}}-${{variables.locationCode}}-network | remove-AzVirtualNetworkGateway -force
+            get-azresourcegroup rg-${{parameters.environmentType}}*-compute | remove-azresourcegroup -force

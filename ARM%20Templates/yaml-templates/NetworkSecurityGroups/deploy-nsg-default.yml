@@ -1,0 +1,29 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: nsgName
+    type: string
+
+
+steps:
+- template: components/deploy-nsg.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: components/deploy-nsgRules.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'

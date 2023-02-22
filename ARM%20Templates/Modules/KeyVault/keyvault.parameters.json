@@ -1,0 +1,53 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "keyVaultName": {
+        "value": "azurevbtest12345"
+      },
+      "tenantId": {
+          "value": "48aaa2b2-67f4-47d4-a8f1-b9b6197d9b23" 
+      },
+      "keyVaultSku": {
+          "value": "Standard"
+      },
+      "accessPolicies": {
+          "value": []
+      },
+      "vaultUri": {
+          "value": ""
+      },
+      "networkAcls": {
+          "value": {
+            "defaultAction": "Allow",
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": []
+          }
+      },
+      "enabledForDeployment": {
+          "value": false
+      },
+      "enabledForTemplateDeployment": {
+          "value": false
+      },
+      "enabledForDiskEncryption": {
+          "value": false
+      },
+      "createMode": {
+          "value": "default"
+      },
+      "location": {
+          "value": ""
+      },
+      "tags_CreationDate": {
+          "value": ""
+      },
+      "tags_Environment": {
+          "value": "Dev"
+      },
+      "tags": {
+          "value": {}
+      }
+    }
+  }

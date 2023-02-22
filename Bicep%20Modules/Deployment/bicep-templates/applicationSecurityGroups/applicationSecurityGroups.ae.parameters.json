@@ -1,0 +1,33 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "asgObject": {
+            "value": { 
+                "asg":[
+                    {
+                        "name": "adds-servers"
+                    },
+                    {
+                        "name": "pki-servers"
+                    },
+                    {
+                        "name": "sccm-servers"
+                    },
+                    {
+                        "name": "sailpoint-servers"
+                    },
+                    {
+                        "name": "privileged-workstations"
+                    },
+                    {
+                        "name": "ansible-servers"
+                    },
+                    {
+                        "name": "accelerate-servers"
+                    }
+                ]
+            }
+        }
+    }
+}

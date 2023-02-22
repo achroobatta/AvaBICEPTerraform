@@ -1,0 +1,195 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create an Azure network interface resource."
+  },
+  "parameters": {
+    "nicName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name of the network interface resource."
+      }
+    },
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "privateIPAddress": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Private IP address of the IP configuration."
+      }
+    },
+    "privateIPAllocationMethod": {
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Static",
+        "Dynamic"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The private IP address allocation method. - Static or Dynamic"
+      }
+    },
+    "pubIPName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Id of the Public IP address bound to the IP configuration."
+      }
+    },
+    "vnetName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) Id of the Subnet bound to the IP configuration"
+      }
+    },  
+    "subnetName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) Id of the Subnet bound to the IP configuration"
+      }
+    },
+    "primary": {
+      "defaultValue": true,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Whether this is a primary customer address on the network interface."
+      }
+    },
+    "privateIPAddressVersion": {
+      "defaultValue": "IPv4",
+      "allowedValues": [
+        "IPv4",
+        "IPv6"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Whether the specific IP configuration is IPv4 or IPv6. Default is IPv4."
+      }
+    },
+    "dnsServers": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) List of DNS servers IP addresses."
+      }
+    },
+    "internalDnsNameLabel": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Relative DNS name for this NIC used for internal communications between VMs in the same virtual network."
+      }
+    },
+    "nsgName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Id of the the NetworkSecurityGroup resource to be associated with this interface."
+      }
+    },
+    "enableAcceleratedNetworking": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) If the network interface is accelerated networking enabled. Default is false"
+      }
+    },
+    "enableIPForwarding": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Indicates whether IP forwarding is enabled on this network interface. Default is false"
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    },
+    "subnetId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/virtualNetworks/',parameters('vnetName'),'/subnets/',parameters('subnetName'))]",
+    "networkSecurityGroupId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/networkSecurityGroups/',parameters('nsgName'))]",
+    "publicIPAddressId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/publicIPAddresses/',parameters('pubIPName'))]",
+    "vnetworkSecurityGroup": {
+      "id": "[variables('networkSecurityGroupId')]"
+    },
+    "vpublicIpAddress": {
+      "id": "[variables('publicIPAddressId')]"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('nicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-04-01",
+      "location": "[variables('location')]",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "[if(equals(parameters('privateIPAllocationMethod'),'Dynamic'),json('null'),parameters('privateIPAddress'))]",
+              "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+              "publicIPAddress": "[if(empty(parameters('pubIPName')),json('null'),variables('vpublicIpAddress'))]",
+              "subnet": {
+                "id": "[variables('subnetId')]"
+              },
+              "primary": "[parameters('primary')]",
+              "privateIPAddressVersion": "[parameters('privateIPAddressVersion')]"
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": "[parameters('dnsServers')]",
+          "internalDnsNameLabel": "[if(empty(parameters('internalDnsNameLabel')),json('null'),parameters('internalDnsNameLabel'))]"
+        },
+        "networkSecurityGroup": "[if(empty(parameters('nsgName')),json('null'),variables('vnetworkSecurityGroup'))]",
+        "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
+        "enableIPForwarding": "[parameters('enableIPForwarding')]"
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+    }
+  }
+}

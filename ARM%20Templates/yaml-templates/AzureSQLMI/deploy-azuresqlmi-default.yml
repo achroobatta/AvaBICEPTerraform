@@ -1,0 +1,72 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: nsgName
+    type: string
+  - name: routeTableName
+    type: string
+  - name: vnetName
+    type: string
+  - name: addressPrefix
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: overrideParameters
+    type: string
+    default: ''
+
+
+steps:
+- template: components/deploy-azuresqlmi-nsg.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: components/deploy-azuresqlmi-nsgRules.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: components/deploy-azuresqlmi-rt.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-routeTableName ${{parameters.routeTableName}}'
+
+- template: components/deploy-azuresqlmi-vnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: 
+      -vnetName ${{parameters.vnetName}}
+      -addressPrefix ${{parameters.addressPrefix}}
+      -subnetName ${{parameters.subnetName}}
+      -subnetPrefix ${{parameters.subnetPrefix}}
+      -routeTableName ${{parameters.routeTableName}}
+      -nsgName ${{parameters.nsgName}}
+
+- template: components/deploy-azuresqlmi.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: ${{parameters.overrideParameters}}

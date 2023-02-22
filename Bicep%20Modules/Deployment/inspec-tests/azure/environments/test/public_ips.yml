@@ -1,0 +1,12 @@
+- name: pip-test-ae-bst-01
+  resource_group: rg-test-ae-network
+  address: 20.92.90.223
+- name: pip-test-ae-fw-01
+  resource_group: rg-test-ae-network
+  address: 20.92.90.218
+- name: pip-test-ae-vgw-01
+  resource_group: rg-test-ae-network
+  address: 20.92.75.3
+- name: pip-test-ase-pki-01
+  resource_group: rg-test-ase-network
+  address: 52.158.128.236

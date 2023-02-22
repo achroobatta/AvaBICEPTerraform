@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": ""
+        },
+        "appInsightsName": {
+            "value": "xxxxx" 
+        },
+        "HockeyAppId": {
+            "value": ""
+        },
+        "SamplingPercentage": {
+            "value": ""
+        },
+        "kind": {
+            "value": "web"
+        },
+        "tags_CreationDate": {
+            "value": ""
+        },
+        "tags_Environment": {
+            "value": "Dev"
+        },
+        "tags": {
+            "value": {}
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "pipObject": {
+            "value": { 
+                "pip":[
+                    {
+                        "name": "bst-01",
+                        "skuName": "Standard",
+                        "tierName": "Regional",
+                        "publicIPAddressVersion": "IPv4",
+                        "publicIPAllocationMethod": "Static",
+                        "dDosProtection": false
+                    }
+                ]
+            }
+        }
+    }
+}

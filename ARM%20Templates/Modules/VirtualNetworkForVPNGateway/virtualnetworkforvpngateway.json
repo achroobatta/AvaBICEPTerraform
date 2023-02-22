@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "NSGParameterArray": {
+            "type": "array"
+        },
+
+        "vNetParameterArray": {
+            "type": "array"
+        },
+         "location": {
+            "type": "string"
+        },
+         "resourceGroupName": {
+            "type": "string"
+        }
+      
+    },
+    "variables": {},
+
+    "resources": [
+        {
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('Deploy-Nsg-',parameters('NSGParameterArray')[copyIndex('Nsgs')].name)]",
+            "resourceGroup": "[parameters('ResourceGroupName')]",
+            "copy": {
+                "name": "Nsgs",
+                "count": "[length(parameters('NSGParameterArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                    "contentVersion": "1.0.0.0",
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2020-05-01",
+                            "type": "Microsoft.Network/networkSecurityGroups",
+                            "name": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].name]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "copy": [
+                                    {
+                                        "name": "securityRules",
+                                        "count": "[length(parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules)]",
+                                        "input": {
+                                            "name": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].name]",
+                                            "properties": {
+                                                "protocol": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].protocol]",
+                                                "sourcePortRange": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].sourcePortRange]",
+                                                "destinationPortRange": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].destinationPortRange]",
+                                                "access": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].access]",
+                                                "sourceAddressPrefix": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].sourceAddressPrefix]",
+                                                "destinationAddressPrefix": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].destinationAddressPrefix]",
+                                                "direction": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].direction]",
+                                                "priority": "[parameters('NSGParameterArray')[copyIndex('Nsgs')].SecurityRules[copyIndex('securityRules')].priority]"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+ {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('Deploy-',parameters('vNetParameterArray')[copyIndex('Vnets')].VnetName)]",
+            "dependsOn": ["Nsgs"],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2020-05-01",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "name": "[parameters('vNetParameterArray')[copyIndex('Vnets')].VnetName]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "[parameters('vNetParameterArray')[copyIndex('Vnets')].VnetAddressSpace]"
+                                    ]
+                                },
+                                "copy": [
+                                    {
+                                        "name": "subnets",
+                                        "count": "[length(parameters('vNetParameterArray')[copyIndex('Vnets')].Subnets)]",
+                                        "input": {
+                                            "name": "[parameters('vNetParameterArray')[copyIndex('Vnets')].Subnets[copyIndex('subnets')].name]",
+                                            "properties": {
+                                                "addressPrefix": "[parameters('vNetParameterArray')[copyIndex('Vnets')].Subnets[copyIndex('subnets')].addressPrefix]",
+                                                "privateEndpointNetworkPolicies": "Disabled",
+                                                "networkSecurityGroup": "[if(equals(parameters('vNetParameterArray')[copyIndex('Vnets')].Subnets[copyIndex('subnets')].networkSecurityGroup, json('null')), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/networkSecurityGroups', parameters('vNetParameterArray')[copyIndex('Vnets')].Subnets[copyIndex('subnets')].networkSecurityGroup), '\"}')))]"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "copy": {
+                "name": "Vnets",
+                "count": "[length(parameters('vNetParameterArray'))]"
+            }
+        }
+    ]
+}

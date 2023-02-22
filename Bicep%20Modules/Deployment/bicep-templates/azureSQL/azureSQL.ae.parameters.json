@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion":  "1.0.0.0",
+  "parameters": {
+    "failover_required": {
+      "value": true
+    },
+    "failoverGroupName": {
+      "value": "pleasedontfail"
+    },
+    "primarySqlServerName": {
+      "value": "avaprimary"
+    },
+    "primaryLocation": {
+      "value": "Australia East"
+    },
+    "secondarySqlServerName": {
+      "value": "avasecondary"
+    },
+    "secondaryLocation": {
+      "value": "East US"
+    },
+    "databaseNames": {
+      "value": ["db1", "db2"]
+    },
+    "sku": {
+      "value": {
+        "name": "S0",
+        "tier": "Standard"
+      }
+    },
+    "administratorLogin": {
+      "value": "avaadmin"
+    },
+    "administratorLoginPassword": {
+      "value": "Password@123#"
+    }
+  }
+}

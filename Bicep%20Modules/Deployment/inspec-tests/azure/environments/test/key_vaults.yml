@@ -1,0 +1,5 @@
+- name: kv-test-ae-sec-01
+  resource_group: rg-test-ae-security
+- name: kv-test-ase-sec-01
+  resource_group: rg-test-ase-security
+

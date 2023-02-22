@@ -1,0 +1,40 @@
+parameters:
+- name: serviceConnection
+  type: string
+- name: environmentType
+  type: string
+- name: job
+  type: string
+
+jobs:
+  - job: ${{parameters.job}}
+    variables:
+      - group: inspec-${{parameters.environmentType}} #variable group depends on environment
+    steps:
+      - task: UseRubyVersion@0
+        displayName: 'Install Ruby'
+        inputs:
+          versionSpec: '>= 2.5'
+          addToPath: true
+
+      - script: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
+        displayName: 'Install Inspec'
+                    
+      - task: Bash@3
+        displayName: 'Run azure inspec tests'
+        inputs:
+          targetType: inline
+          script: |
+            export AZURE_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
+            export AZURE_CLIENT_ID=$(AZURE_CLIENT_ID)
+            export AZURE_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+            export AZURE_TENANT_ID=$(AZURE_TENANT_ID)
+            cp ./Deployment/inspec-tests/azure/environments/${{parameters.environmentType}}/*.yml ./Deployment/inspec-tests/azure/files/
+            inspec exec ./Deployment/inspec-tests/azure -t azure:// --chef-license=accept --reporter cli junit2:test-azure.xml
+      - task: PublishTestResults@2
+        displayName: Publish inspec test results
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: '**/test-azure.xml'
+          mergeTestResults: true
+

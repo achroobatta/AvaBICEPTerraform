@@ -1,0 +1,27 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vgwObject": {
+            "value": { 
+                "vgw":[
+                    {
+                        "name": "hub-01",
+                        "pipName": "vgw-01",
+                        "vnetName": "hub-01",
+                        "sku": "VpnGw1",
+                        "vpnGatewayGeneration": "Generation1",
+                        "vpnType": "RouteBased",
+                        "aadAudience": "41b23e61-6c1e-4545-b367-cd054e0ed4b4",
+                        "aadIssuer": "https://sts.windows.net/bb37dba7-264c-406f-9aca-e28c99c7305e/",
+                        "aadTenant": "https://login.microsoftonline.com/bb37dba7-264c-406f-9aca-e28c99c7305e/",
+                        "addressPrefixes": "10.9.0.0/24",
+                        "vpnClientProtocols": "OpenVPN",
+                        "vpnAuthenticationTypes": "AAD"
+
+                    }
+                ]
+            }
+        }
+    }
+}

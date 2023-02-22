@@ -1,0 +1,62 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: nsgName
+    type: string  
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: domainName
+    type: string    
+
+steps:
+- template: ../NetworkSecurityGroups/components/deploy-nsg.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: deploy-adds-nsgRules.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: ../VirtualNetwork/components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: ../VirtualNetwork/components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -addressPrefix "${{parameters.subnetPrefix}}" -nsgName "${{parameters.nsgName}}"'
+
+- template: deploy-adds.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -domainName "${{parameters.domainName}}"'    

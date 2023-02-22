@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "managedInstanceName": {
+            "value": "azuresqlmi01"
+        },
+        "administratorLogin": {
+            "value": "adminUser"
+        },
+        "administratorLoginPassword": {
+            "value": "@testPassword1234"
+        },
+        "location": {
+            "value": "australiaeast"
+        },
+        "vnetName": {
+            "value": "SQLMI-VNET"
+        },
+        "subnetName": {
+            "value": "ManagedInstance"
+        },
+        "skuName": {
+            "value": "GP_Gen5"
+        },
+        "vCores": {
+            "value": 16
+        },
+        "storageSizeInGB": {
+            "value": 256
+        },
+        "licenseType": {
+            "value": "LicenseIncluded"
+        },
+        "identityType": {
+            "value": "SystemAssigned"
+        }
+    }
+}

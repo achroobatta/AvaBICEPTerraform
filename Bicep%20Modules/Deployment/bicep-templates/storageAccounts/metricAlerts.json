@@ -1,0 +1,25 @@
+{
+    "actionGroupName": "emailReceiver",
+    "metricAlerts":[
+        {
+            "name" : "Azure Storage Availability Low",
+            "severity": 1,
+            "threshold": 95,
+            "timeAggregation": "Average",
+            "metricName": "availability",
+            "operator": "GreaterThanOrEqual",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions":""
+        },
+        {
+            "name" : "Azure Blob Storage Availability Dropped",
+            "severity": 1,
+            "threshold": 90,
+            "timeAggregation": "Average",
+            "metricName": "availability",
+            "operator": "GreaterThanOrEqual",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions":""
+        }
+    ]
+}

@@ -1,0 +1,53 @@
+#Master pipeline calling stages templates which in turn call job templates
+
+trigger:
+  branches:
+    include: 
+    - master
+  paths:
+    include: 
+    - Deployment/bicep-templates
+    - Deployment/yaml-templates
+    - azure-pipelines-lz.yml
+
+pool:
+  vmImage: ubuntu-latest
+
+variables: # Use this creation date for all resource deployments
+  deployDate: $[format('{0:dd}-{0:MM}-{0:yyyy}H{0:HH}_{0:mm}', pipeline.startTime)]
+stages:
+
+#Deploy Development Environment
+- template: Deployment/yaml-templates/stages/run-preflight-checks.yml
+  parameters:
+    stageName: Pre_Flight_Checks
+    environmentType: dev
+    serviceConnection: DevOpsConnection
+    
+ #Deploy Development Environment
+#- template: Deployment/yaml-templates/stages/deploy-landing-zone.yml
+#  parameters:
+#    stageName: Deploy_LZ_Dev
+#   environmentType: dev
+#    hubserviceConnection: DevOpsConnection
+#    serviceConnection: 
+#      - spokeIndex: 1
+#        value: 'sub-spoke1-util-msdn'
+#      - spokeIndex: 2
+#        value: 'sub-spoke2-paws-msdn'
+#      - spokeIndex: 3
+#        value: 'sub-spoke3-avd-msdn'
+
+ #Deploy Prod Environment
+#- template: Deployment/yaml-templates/stages/deploy-landing-zone.yml
+#  parameters:
+#    stageName: Deploy_LZ_Prod
+#    environmentType: prod
+#    hubserviceConnection: Production
+#    serviceConnection: 
+#      - spokeIndex: 1
+#        value: 'sub-spoke1-util-msdn'
+#      - spokeIndex: 2
+#        value: 'sub-spoke2-paws-msdn'
+#      - spokeIndex: 3
+#        value: 'sub-spoke3-avd-msdn'

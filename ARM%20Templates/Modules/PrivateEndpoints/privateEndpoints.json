@@ -1,0 +1,209 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceSelection": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "Application Gateway",
+                "App Service",
+                "SQL Server",
+                "Data Factory",
+                "Key Vault",
+                "Storage Account"
+            ]
+        },
+        "resourceName": {
+          "type": "string",
+          "defaultValue": ""
+        },
+        "endpointName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "australiaeast"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "vnetName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "storageSubresource": {
+            "type": "string",
+            
+            "allowedValues": [
+                "blob",
+                "blob_secondary",
+                "table",
+                "table_secondary",
+                "queue",
+                "queue_secondary",
+                "file",
+                "file_secondary",
+                "web",
+                "web_secondary",
+                "dfs",
+                "dfs_secondary"
+            ]
+        }
+    },
+
+    "variables": {
+        "vnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",     
+        "subnetId": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+
+        "sqlId": "[if(equals(parameters('resourceSelection'),'SQL Server'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.Sql/servers/', parameters('resourceName')),json('null'))]",
+        "kvId": "[if(equals(parameters('resourceSelection'),'Key Vault'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.KeyVault/vaults/', parameters('resourceName')),json('null'))]",
+        "applicationGatewayId": "[if(equals(parameters('resourceSelection'),'Application Gateway'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.Network/applicationgateways/', parameters('resourceName')),json('null'))]",
+        "dataFactoryId": "[if(equals(parameters('resourceSelection'),'Data Factory'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.DataFactory/factories/', parameters('resourceName')),json('null'))]",
+        "appServiceId": "[if(equals(parameters('resourceSelection'),'App Service'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.Web/sites/', parameters('resourceName')),json('null'))]",
+
+        "storageAccountId": "[if(equals(parameters('resourceSelection'),'Storage Account'), concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name,'/providers/Microsoft.Storage/storageAccounts/', parameters('resourceName')),json('null'))]"
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('resourceSelection'), 'SQL Server')]",
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('endpointName'), '-', uniqueString('0'))]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-03-01",
+            "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                        "name": "[parameters('endpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[variables('sqlId')]",
+                            "groupIds": ["sqlServer"]
+                        }
+                    }
+                ]
+            },
+            "tags": {}
+        },
+        {
+          "condition": "[equals(parameters('resourceSelection'), 'Key Vault')]",
+          "location": "[parameters('location')]",
+          "name": "[concat(parameters('endpointName'), '-', uniqueString('1'))]",
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2020-03-01",
+          "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+              "privateLinkServiceConnections": [
+                  {
+                      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                      "name": "[parameters('endpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[variables('kvId')]",
+                          "groupIds": ["vault"]
+                      }
+                  }
+              ]
+          },
+          "tags": {}
+        },
+        {
+          "condition": "[equals(parameters('resourceSelection'), 'Application Gateway')]",
+          "location": "[parameters('location')]",
+          "name": "[concat(parameters('endpointName'), '-', uniqueString('2'))]",
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2020-03-01",
+          "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+              "privateLinkServiceConnections": [
+                  {
+                      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                      "name": "[parameters('endpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[variables('applicationGatewayId')]",
+                          "groupIds": ["application gateway"]
+                      }
+                  }
+              ]
+          },
+          "tags": {}
+        },
+        {
+          "condition": "[equals(parameters('resourceSelection'), 'Data Factory')]",
+          "location": "[parameters('location')]",
+          "name": "[concat(parameters('endpointName'), '-', uniqueString('3'))]",
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2020-03-01",
+          "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+              "privateLinkServiceConnections": [
+                  {
+                      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                      "name": "[parameters('endpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[variables('dataFactoryId')]",
+                          "groupIds": ["dataFactory"]
+                      }
+                  }
+              ]
+          },
+          "tags": {}
+        },
+        {
+          "condition": "[equals(parameters('resourceSelection'), 'App Service')]",
+          "location": "[parameters('location')]",
+          "name": "[concat(parameters('endpointName'), '-', uniqueString('4'))]",
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2020-03-01",
+          "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+              "privateLinkServiceConnections": [
+                  {
+                      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                      "name": "[parameters('endpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[variables('appServiceId')]",
+                          "groupIds": ["sites"]
+                      }
+                  }
+              ]
+          },
+          "tags": {}
+        },
+        {
+          "condition": "[equals(parameters('resourceSelection'), 'Storage Account')]",
+          "location": "[parameters('location')]",
+          "name": "[concat(parameters('endpointName'), '-', uniqueString('5'))]",
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2020-03-01",
+          "properties": {
+                "subnet": {
+                    "id": "[variables('subnetId')]"
+                },
+              "privateLinkServiceConnections": [
+                  {
+                      "type": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections",
+                      "name": "[parameters('endpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[variables('storageAccountId')]",
+                          "groupIds": ["[parameters('storageSubresource')]"]
+                      }
+                  }
+              ]
+          },
+          "tags": {}
+        }
+    ]
+}

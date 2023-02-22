@@ -1,0 +1,4 @@
+[36m[2022-08-12 21:58:19 DEBUG] [cli:112][39m ###############################################################################
+[36m[2022-08-12 21:58:19 DEBUG] [cli:113][39m Running command 'init'
+[36m[2022-08-12 21:58:19 DEBUG] [cli:117][39m Using settings file '/home/andrew/.chaostoolkit/settings.yaml'
+[36m[2022-08-12 21:58:20 DEBUG] [settings:30][39m The Chaos Toolkit settings file could not be found at '/home/andrew/.chaostoolkit/settings.yaml'.

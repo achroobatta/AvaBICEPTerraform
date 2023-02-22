@@ -1,0 +1,34 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: location
+    type: string
+  - name: pathToTemplate
+    type: string
+    default: 'Modules/ResourceGroup'
+  - name: templateName
+    type: string
+    default: 'resourceGroup.json'
+  - name: parameterFileName
+    type: string
+    default: 'rg.parameters.json'  
+  - name: overrideParameters
+    type: string
+    default: ''
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM template deploy Resource Group'
+  inputs:
+    deploymentScope: 'Subscription'
+    azureResourceManagerConnection: ${{ parameters.serviceConnection }}
+    location: ${{ parameters.location }}
+    subscriptionName: ${{ parameters.subscriptionId }}
+    templateLocation: 'Linked artifact'
+    csmFile: '${{parameters.pathToTemplate}}/${{parameters.templateName}}'
+    overrideParameters: '${{ parameters.overrideParameters }}'
+    deploymentMode: 'Incremental'
+    ${{ if ne(length(parameters.parameterFileName), 0) }}:
+      csmParametersFile: '${{parameters.pathToTemplate}}/${{parameters.parameterFileName}}'

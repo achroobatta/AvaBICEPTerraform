@@ -1,0 +1,41 @@
+parameters:
+- name: serviceConnection
+  type: string
+- name: environmentType
+  type: string
+- name: keyVaultName
+  type: string
+- name: secretsFilter
+  type: string
+- name: job
+  type: string
+
+jobs:
+  - job: ${{parameters.job}}
+    pool: LinuxPool # on premises running required to run network tests
+    steps: 
+    - task: AzureKeyVault@2
+      displayName: 'Azure Key Vault: Creds to run WinRM'
+      condition: eq('${{parameters.environmentType}}','prod')
+      inputs:
+        azureSubscription: ${{parameters.serviceConnection}}
+        keyVaultName: ${{parameters.KeyVaultName}}
+        secretsFilter: ${{parameters.secretsFilter}}
+    - task: Bash@3
+      displayName: 'Run server inspec tests'
+      condition: eq('${{ parameters.environmentType }}', 'prod')
+      inputs:
+        targetType: inline
+        script: |
+          cp ./Deployment/inspec-tests/servers/environments/${{parameters.environmentType}}/servers.yml ./Deployment/inspec-tests/servers/
+          readarray -t servers < <(yq '.[].name' ./Deployment/inspec-tests/servers/servers.yml) 
+          readarray -t roles < <(yq '.[].role' ./Deployment/inspec-tests/servers/servers.yml)
+          length=${#servers[@]}
+          for ((j=0;j<${length};j++)); do inspec exec ./Deployment/inspec-tests/servers/${roles[j]} -b winrm  --host ${servers[j]} --password '$(svcwinrm)' --user ${{parameters.secretsFilter}} --chef-license=accept --reporter cli junit2:test-${servers[j]}-${roles[j]}.xml; done
+    - task: PublishTestResults@2
+      displayName: Publish server inspec test results
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFiles: '**/test-*.xml'
+        mergeTestResults: true
+

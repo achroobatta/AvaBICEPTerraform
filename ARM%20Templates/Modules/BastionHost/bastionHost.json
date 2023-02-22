@@ -1,0 +1,53 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "bastionHostName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Azure Bastion resource"
+      }
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "publicIpAddressName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region for Bastion and virtual network"
+      }
+    }
+  },
+  "variables": {
+    "bastionSubnetName": "AzureBastionSubnet"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/bastionHosts",
+      "apiVersion": "2020-05-01",
+      "name": "[parameters('bastionHostName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName'))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+- name: pip-dev-ae-bst-01
+  resource_group: rg-dev-ae-network
+  address: 20.70.194.128
+- name: pip-dev-ae-fw-01
+  resource_group: rg-dev-ae-network
+  address: 20.70.197.142
+- name: pip-dev-ae-vgw-01
+  resource_group: rg-dev-ae-network
+  address: 20.211.105.231
+- name: pip-dev-ase-pki-01
+  resource_group: rg-dev-ase-network
+  address: 13.70.153.11

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create a key vault resource."
+  },
+  "parameters": {
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name used for your key vault resource"
+      }
+    },
+    "keyVaultSku": {
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(required) SKU name to specify whether the key vault is a standard vault or a premium vault. - standard or premium"
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. - globally unique identifier."
+      }
+    },
+    "accessPolicies": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "(optional) An array of 0 to 16 identities that have access to the key vault. All identities in the array must use the same tenant ID as the key vault's tenant ID. When createMode is set to recover, access policies are not required. Otherwise, access policies are required."
+      }
+    },
+    "vaultUri": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The URI of the vault for performing operations on keys and secrets."
+      }
+    },
+    "networkAcls": {
+      "defaultValue": {
+        "defaultAction": "Allow",
+        "bypass": "AzureServices",
+        "virtualNetworkRules": [],
+        "ipRules": []
+      },
+      "type": "object",
+      "metadata": {
+        "description": "(optional) A collection of rules governing the accessibility of the vault from specific network locations."
+      }
+    },
+    "enabledForDeployment": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Property to specify whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault."
+      }
+    },
+    "enabledForTemplateDeployment": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Property to specify whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+      }
+    },
+    "enabledForDiskEncryption": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Property to specify whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys."
+      }
+    },
+    "createMode": {
+      "defaultValue": "default",
+      "allowedValues": [
+        "default",
+        "recover"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The vault's create mode to indicate whether the vault need to be recovered or not. - recover or default."
+      }
+    },
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    },
+    "skus": {
+      "Standard": {
+        "name": "Standard",
+        "family": "A"
+      },
+      "Premium": {
+        "name": "Premium",
+        "family": "P"
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-14",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[variables('location')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "properties": {
+        "enabledForDeployment": "[parameters('enabledForDeployment')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+        "createMode": "[parameters('createMode')]",
+        "accessPolicies": "[parameters('accessPolicies')]",
+        "tenantId": "[parameters('tenantId')]",
+        "vaultUri": "[if(empty(parameters('vaultUri')),concat('https://',parameters('keyVaultName'),'.vault.azure.net'),parameters('vaultUri'))]",
+        "sku": {
+          "name": "[variables('skus')[parameters('keyVaultSku')].name]",
+          "family": "[variables('skus')[parameters('keyVaultSku')].family]"
+        },
+        "networkAcls": "[parameters('networkAcls')]"
+      },
+      "dependsOn": []
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+      "type": "string"
+    }
+  }
+}

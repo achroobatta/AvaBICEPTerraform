@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create an Azure Log Analytics workspace resource."
+  },
+  "parameters": {
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name used for your workspace resource."
+      }
+    },
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "sku": {
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free",
+        "Standard",
+        "Premium",
+        "PerNode",
+        "PerGB2018",
+        "Standalone",
+        "CapacityReservation"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name of the SKU."
+      }
+    },
+    "retentionInDays": {
+      "defaultValue": 3,
+      "type": "int",
+      "metadata": {
+        "description": "(optional) The workspace data retention in days. -1 means Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed for all other Skus."
+      }
+    },
+    "publicNetworkAccessForIngestion": {
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The network access type for accessing Log Analytics ingestion."
+      }
+    },
+    "publicNetworkAccessForQuery": {
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The network access type for accessing Log Analytics query."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+    "skuObj": {
+      "name": "[parameters('sku')]"
+    },
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2020-03-01-preview",
+      "name": "[parameters('workspaceName')]",
+      "location": "[variables('location')]",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "properties": {
+        "sku": "[variables('skuObj')]",
+        "retention": "[parameters('retentionInDays')]",
+        "publicNetworkAccessForIngestion": "[parameters('publicNetworkAccessForIngestion')]",
+        "publicNetworkAccessForQuery": "[parameters('publicNetworkAccessForQuery')]"
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+      "type": "string"
+    }
+  }
+}

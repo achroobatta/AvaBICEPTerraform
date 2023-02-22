@@ -1,0 +1,128 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: hubServiceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: resourceType
+    type: string
+  - name: job
+    type: string
+  - name: scope
+    type: string
+  - name: jobDependsOn
+    type: string
+  - name: location
+    type: string
+  - name: spokeIndex
+    type: string
+    default: ''
+
+  jobs:
+    - job: ${{parameters.job}}
+      dependsOn: ${{parameters.jobDependsOn}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+            spokeIndex: ${{parameters.spokeIndex}} # Spoke numeric identifier
+      steps: 
+      - template: ../steps/get-subscriptions.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          hubServiceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+
+      - task: AzureCLI@2 # Application Security Group
+        displayName: Build ${{parameters.resourceType}} ${{parameters.location}} ASGs
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >
+            az account set --subscription $(hubSubscriptionTask.hubSubscription) &&
+            az deployment ${{parameters.scope}} create 
+            --name "applicationSecurityGroups"$(deployDate)
+            --resource-group ${{variables.networkGroup}}
+            --parameters "environmentType="${{parameters.environmentType}}
+            --template-file Deployment/bicep-templates/applicationSecurityGroups/applicationSecurityGroups.bicep 
+            --parameters Deployment/bicep-templates/applicationSecurityGroups/applicationSecurityGroups.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "location="${{parameters.location}}
+            --parameters "asgPrefix="${{variables.asgPrefix}}
+            --parameters "networkGroup="${{variables.networkGroup}}
+            --parameters "deployDate="${{variables.deployDate}}
+      - task: AzureCLI@2 #Network Security Group 
+        displayName: Build ${{parameters.resourceType}} ${{parameters.location}} NSGs
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: > # if not a spoke deployment 'spokePath' will be null
+            az account set --subscription $(hubSubscriptionTask.hubSubscription) &&
+            az deployment ${{parameters.scope}} create 
+            --name "networkSecurityGroups"$(deployDate)
+            --resource-group ${{variables.networkGroup}}
+            --parameters "environmentType="${{parameters.environmentType}}
+            --template-file Deployment/bicep-templates/networkSecurityGroups/networkSecurityGroups.bicep 
+            --parameters Deployment/bicep-templates/networkSecurityGroups/networkSecurityGroups.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "location="${{parameters.location}}
+            --parameters "nsgPrefix="${{variables.nsgPrefix}}
+            --parameters "networkGroup="${{variables.networkGroup}}
+            --parameters "flPrefix="${{variables.flPrefix}}
+            --parameters "workspaceName="${{variables.workspaceName}}
+            --parameters "workspaceGroup="${{variables.workspaceGroup}}
+            --parameters "hubSubscription="$(hubSubscriptionTask.hubSubscription)
+            --parameters "loggingStorageAccountName="${{variables.loggingStorageAccountName}}
+            --parameters "loggingStorageAccountGroup="${{variables.loggingStorageAccountGroup}}
+            --parameters "deployDate="$(deployDate)
+      - task: AzureCLI@2 # Virtual Networks
+        displayName: Build ${{parameters.resourceType}} ${{parameters.location}} vNETs
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >  # if not a spoke deployment 'spokePath' will be null
+            az account set --subscription $(hubSubscriptionTask.hubSubscription) &&
+            az deployment ${{parameters.scope}} create 
+            --name "virtualNetworks"$(deployDate)
+            --resource-group ${{variables.networkGroup}}
+            --parameters "environmentType="${{parameters.environmentType}}
+            --template-file Deployment/bicep-templates/virtualNetworks/virtualNetworks.bicep 
+            --parameters Deployment/bicep-templates/virtualNetworks/virtualNetworks.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "location="${{parameters.location}}
+            --parameters "vnPrefix="${{variables.vnPrefix}}
+            --parameters "snPrefix="${{variables.snPrefix}}
+            --parameters "nsgPrefix="${{variables.nsgPrefix}}
+            --parameters "networkGroup="${{variables.networkGroup}}
+            --parameters "deployDate="$(deployDate)
+            --parameters "workspaceName="${{variables.workspaceName}}
+            --parameters "workspaceGroup="${{variables.workspaceGroup}}
+            --parameters "hubSubscription="$(hubSubscriptionTask.hubSubscription)
+            --parameters "loggingStorageAccountName="${{variables.loggingStorageAccountName}}
+            --parameters "loggingStorageAccountGroup="${{variables.loggingStorageAccountGroup}}
+      - task: AzureCLI@2 # Virtual Network Peerings
+        displayName: Build ${{parameters.resourceType}} ${{parameters.location}} VNET Peerings
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >
+            az account set --subscription $(hubSubscriptionTask.hubSubscription) &&
+            az deployment ${{parameters.scope}} create 
+            --name "vnetPeerings"$(deployDate)
+            --resource-group ${{variables.networkGroup}}
+            --template-file Deployment/bicep-templates/virtualNetworkPeerings/virtualNetworkPeerings.bicep 
+            --parameters Deployment/bicep-templates/virtualNetworkPeerings/virtualNetworkPeerings.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "networkGroup="${{variables.networkGroup}}
+            --parameters "hubSubscription="$(hubSubscriptionTask.hubSubscription)
+            --parameters "environmentType="${{parameters.environmentType}}
+
+
+
+
+
+

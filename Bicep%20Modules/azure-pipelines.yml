@@ -1,0 +1,135 @@
+#Master pipeline calling stages templates which in turn call job templates
+parameters:
+- name: deployEnvironments
+  displayName: Environments
+  type: string
+  default: "Development"
+  values:
+  - "Development"
+  - "Test"
+  - "Sandbox"
+  - "System Integration Testing"
+  - "User Acceptance Testing"
+  - "Pre-Production"
+  - "Production"
+  - "Data Development"
+
+trigger:
+  none
+  # branches:
+  #   include: 
+  #   - main
+  # paths:
+  #   include: 
+  #   - Deployment/bicep-templates
+  #   - Deployment/yaml-templates
+  #   - azure-pipelines.yml
+
+pool:
+  # agentpool
+  vmImage: ubuntu-latest
+  
+variables: # Use this creation date for all resource deployments
+  deployDate: $[format('{0:dd}-{0:MM}-{0:yyyy}H{0:HH}_{0:mm}', pipeline.startTime)]
+stages:
+
+#Deploy Development Environment
+- template: Deployment/yaml-templates/stages/run-preflight-checks.yml
+  parameters:
+    stageName: Pre_Flight_Checks
+    environmentType: dev
+    serviceConnection: myVSPsubscription
+
+#Deploy Tenant Configuration - Prod only deployment
+- template: Deployment/yaml-templates/stages/deploy-tenant-mg.yml
+  parameters:
+    stageName: Tenant_MG_Resources
+    environmentType: dev
+    #serviceConnection: TenantRootGroup
+    serviceConnection: myVSPsubscription
+
+#Deploy Development Environment
+- template: Deployment/yaml-templates/stages/deploy-shared-infra.yml
+  parameters:
+    stageName: Deploy_Dev_Infra
+    environmentType: dev
+    serviceConnection: myVSPsubscription
+    hubserviceConnection: myVSPsubscription
+
+# - template: Deployment/yaml-templates/stages/run-inspec-tests.yml
+#   parameters:
+#     stageName: Test_Dev_Infra
+#     environmentType: dev
+#     serviceConnection: DevOpsConnection
+#     keyVaultName: kv-dev-ae-sec-01
+#     secretsFilter: svcwinrm
+
+#Deploy Development Firewall
+- template: Deployment/yaml-templates/stages/deploy-azure-firewalls.yml
+  parameters:
+    stageName: Deploy_Dev_Firewall
+    environmentType: dev
+    serviceConnection: myVSPsubscription
+    hubserviceConnection: myVSPsubscription
+
+#Cleanup Development Environment
+- template: Deployment/yaml-templates/stages/cleanup-resources.yml
+  parameters:
+    stageName: Cleanup_Dev_Resources
+    environmentType: dev
+    serviceConnection: myVSPsubscription
+
+#Deploy Test Environment
+# - template: Deployment/yaml-templates/stages/deploy-shared-infra.yml
+#   parameters:
+#     stageName: Deploy_Test_Infra
+#     environmentType: test
+#     serviceConnection: Test
+#     hubserviceConnection: Test
+
+# - template: Deployment/yaml-templates/stages/run-inspec-tests.yml
+#   parameters:
+#     stageName: Test_Test_Infra
+#     environmentType: test
+#     serviceConnection: Test
+#     keyVaultName: kv-test-ae-sec-01
+#     secretsFilter: svcwinrm
+
+##Deploy Test Firewall
+# - template: Deployment/yaml-templates/stages/deploy-azure-firewalls.yml
+#   parameters:
+#     stageName: Deploy_Test_Firewall
+#     environmentType: test
+#     serviceConnection: Test
+#     hubserviceConnection: Test
+
+#Cleanup Test Environment
+# - template: Deployment/yaml-templates/stages/cleanup-resources.yml
+#   parameters:
+#     stageName: Cleanup_Test_Resources
+#     environmentType: test
+#     serviceConnection: Test
+
+#Deploy Prod Environment
+#- template: Deployment/yaml-templates/stages/deploy-shared-infra.yml
+#  parameters:
+#    stageName: Deploy_Prod_Infra
+#    environmentType: prod
+#    serviceConnection: Production
+#    hubserviceConnection: Production
+
+# - template: Deployment/yaml-templates/stages/run-inspec-tests.yml
+#   parameters:
+#     stageName: Test_Prod_Infra
+#     environmentType: prod
+#     serviceConnection: Production
+#     keyVaultName: kv-prod-ae-sec-01
+#     secretsFilter: svcwinrm
+
+#Deploy Prod Locks
+#- template: Deployment/yaml-templates/stages/deploy-locks.yml
+#  parameters:
+#    stageName: Deploy_Prod_RG_Locks
+#    environmentType: prod
+#    serviceConnection: Production
+#    hubserviceConnection: Production

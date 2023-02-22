@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "pubIPName": {
+            "value": "xxxx"
+        },
+        "location": {
+            "value": ""
+        },
+        "sku": {
+            "value": "Basic"
+        },
+        "publicIPAllocationMethod": {
+            "value": "Dynamic"
+        },
+        "publicIPAddressVersion": {
+            "value": "IPv4"
+        },
+        "domainNameLabel": {
+            "value": ""
+        },
+        "ddosCustomPolicyId": {
+            "value": ""
+        },
+        "protectionCoverage": {
+            "value": "Basic"
+        },
+        "protectedIP": {
+            "value": false
+        },
+        "ipTags": {
+            "value": []
+        },
+        "ipAddress": {
+            "value": ""
+        },
+        "publicIPPrefixId": {
+            "value": ""
+        },
+        "idleTimeoutInMinutes": {
+            "value": 4
+        },
+        "zones": {
+            "value": []
+        },
+        "tags_CreationDate": {
+            "value": ""
+        },
+        "tags_Environment": {
+            "value": "Dev"
+        },
+        "tags": {
+            "value": {}
+        }
+    }
+}

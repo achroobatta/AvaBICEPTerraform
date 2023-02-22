@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "dataFactoryName": {
+        "type": "string",
+        "metadata": {
+          "description": "Data Factory Name"
+        }
+      },
+      "location": {
+        "type": "string",
+        "metadata": {
+          "description": "Location of the data factory."
+        }
+      }
+    },
+    "variables": {
+    },
+    "resources": [
+      {
+        "type": "Microsoft.DataFactory/factories",
+        "apiVersion": "2018-06-01",
+        "name": "[parameters('dataFactoryName')]",
+        "location": "[parameters('location')]",
+        "identity": {
+          "type": "SystemAssigned"
+        },
+        "properties": {
+          
+        }
+      }
+    ]
+  }

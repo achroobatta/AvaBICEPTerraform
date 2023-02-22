@@ -1,0 +1,73 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: hubServiceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+  - stage: ${{parameters.stageName}}
+    # do not run prod unless in master branch
+    # only run if previous stage has completed successfully
+    condition: and(or(not(eq('${{ parameters.environmentType }}', 'prod')), eq(variables['Build.SourceBranch'], 'refs/heads/master')),succeeded())
+    jobs:
+    # For Hub build the serviceConnection & hubServiceConnection are the same. This is not true for spoke
+    
+    # Resource Groups
+      - template: ../jobs/deploy-resourceGroups.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: resourceGroups
+          job: ${{parameters.stageName}}_RGs_AustraliaEast
+          location: AustraliaEast
+          scope: sub
+      # # Action Groups
+      - template: ../jobs/deploy-actionGroups.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_AustraliaEast
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: actionGroups
+          job: ${{parameters.stageName}}_ActionGroups
+          location: AustraliaEast
+          scope: group
+      # # Log Analytics
+      - template: ../jobs/deploy-logAnalytics.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_AustraliaEast
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: logAnalytics
+          job: ${{parameters.stageName}}_WSs_AustraliaEast
+          location: AustraliaEast
+          scope: group
+      # #Storage Accounts
+      - template: ../jobs/deploy-storageAccounts.yml 
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_WSs_AustraliaEast
+          serviceConnection: ${{parameters.serviceConnection}}
+          hubserviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: storageAccounts
+          job: ${{parameters.stageName}}_SAs_AustraliaEast
+          location: AustraliaEast
+          scope: group
+      # Application Gateway
+      - template: ../jobs/deploy-appGateways.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_SAs_AustraliaEast
+          serviceConnection: ${{parameters.serviceConnection}}
+          hubserviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: applicationGateway
+          job: ${{parameters.stageName}}_AppGws_AustraliaEast
+          location: AustraliaEast
+          scope: group

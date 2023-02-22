@@ -1,0 +1,151 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vmObject": {
+            "value": { 
+                "vm":[
+                    {
+                        "name": "dc01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "adds-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "dc-01",
+                        "applicationSecurityGroup": "adds-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    },
+                    {
+                        "name": "dc02",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "adds-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "dc-01",
+                        "applicationSecurityGroup": "adds-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    },
+                    {
+                        "name": "pki01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "pki-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "pki-01",
+                        "applicationSecurityGroup": "pki-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    },
+                    {
+                        "name": "sccm01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "sccm-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "sccm-01",
+                        "applicationSecurityGroup": "sccm-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": [
+                            {
+                                "name": "disk-01",
+                                "diskSize": 32,
+                                "lun": 0,
+                                "writeAcceleration": false
+                            },
+                            {
+                                "name": "disk-02",
+                                "diskSize": 32,
+                                "lun": 1,
+                                "writeAcceleration": false
+                            }
+                        ]
+                    },
+                    {
+                        "name": "paw01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "windows-11",
+                            "publisher": "MicrosoftWindowsDesktop",
+                            "sku": "win11-21h2-ent",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "privileged-workstations",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "paw-01",
+                        "applicationSecurityGroup": "privileged-workstations",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    },
+                    {
+                        "name": "ans01",
+                        "osType": "Linux",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "UbuntuServer",
+                            "publisher": "Canonical",
+                            "sku": "18.04-LTS",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "ansible-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "ansible-01",
+                        "applicationSecurityGroup": "ansible-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    },
+                    {
+                        "name": "acc01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "accelerate-servers",
+                        "virtualNetwork": "hub-01",
+                        "subnet": "accelerate-01",
+                        "applicationSecurityGroup": "accelerate-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+#Master pipeline calling stages templates which in turn call job templates
+trigger: none
+schedules:
+- cron: "0 5 * * *"
+  displayName: Midnight cleanup of non-production resources
+  branches:
+    include:
+    - master
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+#Cleanup Development Environment
+- template: Deployment/yaml-templates/stages/cleanup-resources.yml
+  parameters:
+    stageName: Cleanup_Dev_Resources
+    environmentType: dev
+    serviceConnection: DevOpsConnection
+
+##Cleanup Test Environment
+#- template: Deployment/yaml-templates/stages/cleanup-resources.yml
+#  parameters:
+#    stageName: Cleanup_Test_Resources
+#    environmentType: test
+#    serviceConnection: Test
+

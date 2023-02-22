@@ -1,0 +1,34 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: privateDnsZoneName
+    type: string
+  - name: vmRegistration
+    type: string
+
+steps:
+- template: ../VirtualNetwork/components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: deploy-private-dns.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-privateDnsZoneName ${{parameters.privateDnsZoneName}} -vmRegistration ${{parameters.vmRegistration}} -vnetName ${{parameters.vnetname}}'

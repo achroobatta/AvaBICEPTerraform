@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "privateEndpointsObject": {
+      "value": {
+        "privateEndpoints": [
+          {
+            "targetResourceType": "Storage Account",
+            "targetResourceName": "sadevaediags02",
+            "targetRgName": "rg-dev-ae-storage",
+            "storageSubresource": "blob",
+            "endpointName": "sa-endpoint-01",
+            "vnetName": "vn-dev-ae-hub-01",
+            "subnetName": "sn-dev-ae-dc-01"
+          },
+          {
+            "targetResourceType": "Storage Account",
+            "targetResourceName": "sadevaefile02",
+            "targetRgName": "rg-dev-ae-storage",
+            "storageSubresource": "blob",
+            "endpointName": "sa-endpoint-02",
+            "vnetName": "vn-dev-ae-hub-01",
+            "subnetName": "sn-dev-ae-dc-01"
+          },          
+          {
+            "targetResourceType": "Key Vault",
+            "targetResourceName": "kv-dev-ae-sec-15",
+            "targetRgName": "rg-dev-ae-security",
+            "endpointName": "kv-endpoint-01",
+            "vnetName": "vn-dev-ae-hub-01",
+            "subnetName": "sn-dev-ae-dc-01"
+          }
+        ]
+      }
+    }
+  }
+}

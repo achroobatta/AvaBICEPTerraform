@@ -1,0 +1,6 @@
+- name: saprodaediags01
+  resource_group: rg-prod-ae-storage
+- name: saprodaefile01
+  resource_group: rg-prod-ae-storage
+- name: saprodasediags01
+  resource_group: rg-prod-ase-storage

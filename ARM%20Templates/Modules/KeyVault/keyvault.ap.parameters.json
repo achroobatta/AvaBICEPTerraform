@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "keyVaultName": {
+        "value": "sample"
+      },
+      "tenantId": {
+        "value": "sample"
+      },
+      "objectId": {
+        "value": "sample" 
+      },
+      "operation": {
+          "value": "add"
+      },
+      "secretsPermissions": {
+          "value": []
+      },
+      "certificatesPermissions": {
+          "value": []
+      },
+      "keysPermissions": {
+          "value": []
+      },
+      "storagePermissions": {
+          "value": []
+      }
+    }
+  }

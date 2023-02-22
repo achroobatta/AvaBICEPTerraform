@@ -1,0 +1,12 @@
+- name: vn-prod-ae-hub-01-to-vn-prod-ase-hub-01
+  vnet: vn-prod-ae-hub-01
+  resource_group: rg-prod-ae-network
+- name: vn-prod-ae-hub-01-to-vn-prod-sp1-ase-spoke-01
+  resource_group: rg-prod-ae-network
+  vnet: vn-prod-ae-hub-01
+- name: vn-prod-ae-hub-01-to-vn-prod-sp1-ae-spoke-01
+  resource_group: rg-prod-ae-network
+  vnet: vn-prod-ae-hub-01
+- name: vn-prod-ase-hub-01-to-vn-prod-ae-hub-01
+  resource_group: rg-prod-ase-network
+  vnet: vn-prod-ase-hub-01

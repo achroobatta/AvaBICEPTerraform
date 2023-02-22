@@ -1,0 +1,29 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+- stage: ${{parameters.stageName}}
+  condition: succeededOrFailed()
+  jobs:
+  # Resource Groups
+    - template: ../jobs/cleanup-resources.yml
+      parameters:
+        serviceConnection: ${{parameters.serviceConnection}}
+        environmentType: ${{parameters.environmentType}}
+        vgs: ../vgs/global.yml
+        job: ${{parameters.stageName}}${{variables.locationCode}}01
+        location: AustraliaEast
+
+# not currently required
+#    - template: ../jobs/cleanup-resources.yml
+#      parameters:
+#        serviceConnection: ${{parameters.serviceConnection}}
+#        environmentType: ${{parameters.environmentType}}
+#        vgs: ../vgs/global.yml
+#        job: ${{parameters.stageName}}${{variables.locationCode}}02
+#        location: AustraliaSouthEast
+    

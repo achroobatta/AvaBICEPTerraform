@@ -1,0 +1,91 @@
+variable "resource_group_name" {
+  default = "azureadds"
+  description = "Resource Group name"
+}
+variable "location" {
+  default = "australiaeast"
+  description = "The Azure location where all resources in this example should be created"
+}
+
+variable "virtual_network_name" {
+    default = "dev-vnet"
+    description = "vNET to be imported and used by ADDS"
+}
+
+variable "subnet_name" {
+    default = "subnetadds01"
+    description = "Subnet to be imported and used by ADDS"
+}
+
+variable  "apiVersion"{
+  default = "2021-03-01"
+  description = "For JSON - 2017-06-01"
+}
+
+variable  "domainConfigurationType" {
+  default = "FullySynced"
+  description = "DomainSecurity Settings - DomainSecuritySettings object"
+}
+
+variable  "domainName" {
+  default = "dev.bond.net"
+  description = "The name of the Azure domain that the user would like to deploy Domain Services to."
+}
+
+variable  "sku" {
+  default = "Premium"
+  description = "Sku Type"
+}
+
+variable  "filteredSync" {
+  default = "Disabled"
+  description = "Enabled or Disabled flag to turn on Group-based filtered sync. - Enabled or Disabled"
+}
+
+variable  "ntlmV1" {
+  default = "Enabled"
+  description = "A flag to determine whether or not NtlmV1 is enabled or disabled. - Enabled or Disabled"
+}
+
+variable  "tlsV1" {
+  default = "Enabled"
+  description = "A flag to determine whether or not TlsV1 is enabled or disabled. - Enabled or Disabled"
+}
+
+variable  "syncNtlmPasswords" {
+  default = "Enabled"
+  description = "A flag to determine whether or not SyncNtlmPasswords is enabled or disabled. - Enabled or Disabled"
+}
+
+variable  "syncKerberosPasswords" {
+  default = "Enabled"
+  description = "A flag to determine whether or not SyncKerberosPasswords is enabled or disabled. - Enabled or Disabled"
+}
+
+variable  "syncOnPremPasswords" {
+  default = "Enabled"
+  description = "A flag to determine whether or not SyncOnPremPasswords is enabled or disabled. - Enabled or Disabled"
+}
+
+variable  "kerberosRc4Encryption" {
+  default = "Enabled"
+  description = "A flag to determine whether or not KerberosRc4Encryption is enabled or disabled. - Enabled or Disabled"
+}
+
+
+variable  "kerberosArmoring" {
+  default = "Disabled"
+  description = "A flag to determine whether or not KerberosArmoring is enabled or disabled. - Enabled or Disabled"
+}
+
+
+variable  "notifyGlobalAdmins" {
+  default = "Enabled"
+  description = "Should global admins be notified. - Enabled or Disable"
+}
+
+
+variable  "notifyDcAdmins" {
+  default = "Enabled"
+  description = "Should domain controller admins be notified. - Enabled or Disabled"
+}

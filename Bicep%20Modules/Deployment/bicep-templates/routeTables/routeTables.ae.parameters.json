@@ -1,0 +1,31 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "rtObject": {
+            "value": { 
+                "rt":[
+                    {
+                      "name": "GatewaySubnet",
+                      "disableBgpRoutePropagation": true,
+                      "flowLogsStorageRetention": 7,
+                      "routes":[
+                        {
+                          "name": "mgmt-01",
+                          "addressPrefix": "10.40.1.192/26",
+                          "hasBgpOverride": false,
+                          "nextHopType": "VirtualAppliance"
+                        },
+                        {
+                          "name": "Internet",
+                          "addressPrefix": "0.0.0.0/0",
+                          "hasBgpOverride": false,
+                          "nextHopType": "Internet"
+                        }
+                      ]
+                    }
+                ]
+            }
+        }
+    }
+}

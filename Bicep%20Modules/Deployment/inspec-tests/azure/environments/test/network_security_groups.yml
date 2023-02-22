@@ -1,0 +1,16 @@
+- name: nsg-test-ae-dc-01
+  resource_group: rg-test-ae-network
+- name: nsg-test-ae-exc-01
+  resource_group: rg-test-ae-network
+- name: nsg-test-ae-pki-01
+  resource_group: rg-test-ae-network
+- name: nsg-test-ae-sailpoint-01
+  resource_group: rg-test-ae-network
+- name: nsg-test-ae-sccm-01
+  resource_group: rg-test-ae-network
+- name: nsg-test-ase-dc-01
+  resource_group: rg-test-ase-network
+- name: nsg-test-ase-pki-01
+  resource_group: rg-test-ase-network  
+- name: nsg-test-ase-test-01
+  resource_group: rg-test-ase-network

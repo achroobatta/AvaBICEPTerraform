@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create a resource group."
+  },
+  "parameters": {
+    "resourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name used for your resource group"
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": ["Dev", "Test", "Prod"],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2021-04-01",
+      "name": "[parameters('resourceGroupName')]",
+      "location": "[parameters('location')]",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]"
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "value": "[resourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]",
+      "type": "string"
+    }
+  }
+}

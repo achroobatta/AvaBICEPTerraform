@@ -1,0 +1,20 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "dataCollectionRulesObject": {
+            "value": { 
+                "dataCollectionRules":[
+                    {
+                        "osType" : "Linux",
+                        "description": "Linux baseline collection rule"
+                    },
+                    {
+                        "osType" : "Windows",
+                        "description": "WindowsIt w baseline collection rule"
+                    }
+                ]
+            }
+        }
+    }
+}

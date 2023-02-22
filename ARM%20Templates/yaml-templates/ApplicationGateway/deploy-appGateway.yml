@@ -1,0 +1,38 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: pathToTemplate
+    type: string
+    default: 'Modules/ApplicationGateway'
+  - name: templateName
+    type: string
+    default: 'appGateway.pubIP.json'
+  - name: parameterFileName
+    type: string
+    default: 'appGateway.pubIP.parameters.json'    
+  - name: overrideParameters
+    type: string
+    default: ''
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM template deploy application gateway'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: ${{ parameters.serviceConnection }}
+    subscriptionId: ${{ parameters.subscriptionId }}
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: ${{ parameters.resourceGroupName }}
+    location: ${{ parameters.location }}
+    templateLocation: 'Linked artifact'
+    csmFile: '${{parameters.pathToTemplate}}/${{parameters.templateName}}'
+    overrideParameters: '${{ parameters.overrideParameters }}'
+    deploymentMode: 'Incremental'
+    ${{ if ne(length(parameters.parameterFileName), 0) }}:
+      csmParametersFile: '${{parameters.pathToTemplate}}/${{parameters.parameterFileName}}'

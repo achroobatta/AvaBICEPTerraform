@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Log Analytics workspace your Azure Sentinel connects to"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Location of the Log Analytics workspace. Find available regions and add more to the list"
+            }
+        }
+      },
+    "variables": {
+        "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+        "azureSentinelSolutionName": "[concat('SecurityInsights','(',parameters('workspaceName'),')')]",
+        "product": "OMSGallery/SecurityInsights",
+        "publisher": "Microsoft",
+        "workspaceNameId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.OperationalInsights/workspaces/',parameters('workspaceName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('azureSentinelSolutionName')]",
+            "location": "[variables('location')]",
+            "plan": {
+                "name": "[variables('azureSentinelSolutionName')]",
+                "promotionCode": "",
+                "product": "[variables('product')]",
+                "publisher": "[variables('publisher')]"
+            },
+            "properties": {
+                "workspaceResourceId": "[variables('workspaceNameId')]"
+            }
+        }
+    ]
+}

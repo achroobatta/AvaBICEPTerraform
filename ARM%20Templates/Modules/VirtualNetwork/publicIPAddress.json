@@ -1,0 +1,198 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create a public IP Address resource."
+  },
+  "parameters": {
+    "pubIPName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name of the public ip address resource."
+      }
+    },
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "sku": {
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Name of a public IP address SKU."
+      }
+    },
+    "publicIPAllocationMethod": {
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Static",
+        "Dynamic"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The public IP address allocation method. - Static or Dynamic"
+      }
+    },
+    "publicIPAddressVersion": {
+      "defaultValue": "IPv4",
+      "allowedValues": [
+        "IPv4",
+        "IPv6"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The public IP address version. - IPv4 or IPv6"
+      }
+    },
+    "domainNameLabel": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The domain name label. The concatenation of the domain name label and the regionalized DNS zone make up the fully qualified domain name associated with the public IP address. If a domain name label is specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system."
+      }
+    },
+    "ddosCustomPolicyId": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The DDoS custom policy associated with the public IP."
+      }
+    },
+    "protectionCoverage": {
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The DDoS protection policy customizability of the public IP. Only standard coverage will have the ability to be customized. - Basic or Standard"
+      }
+    },
+    "protectedIP": {
+      "defaultValue": false,
+      "type": "bool",
+      "metadata": {
+        "description": "(optional) Enables DDoS protection on the public IP."
+      }
+    },
+    "ipTags": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) Array of ipTagTypes. IpTagType is an object with 2 fiels: ipTagType and tag. ipTagType is a string indicating the type of tag being created (ex. FirstPartyUsage). tag is a string indicating the value of the tag type (ex. SQL)."
+      }
+    },
+    "ipAddress": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The IP address associated with the public IP address resource."
+      }
+    },
+    "publicIPPrefixId": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The Public IP Prefix from which this Public IP Address should be allocated."
+      }
+    },
+    "idleTimeoutInMinutes": {
+      "defaultValue": 4,
+      "type": "int",
+      "metadata": {
+        "description": "(optional) The idle timeout of the public IP address."
+      }
+    },
+    "zones": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) A list of availability zones denoting from where the IP allocated for the resource needs to come."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''), resourceGroup().location, parameters('location'))]",
+    "vddosSettings": {
+      "ddocCustomPolicy": {
+        "id": "[parameters('ddosCustomPolicyId')]"
+      },
+      "protectionConverage": "[parameters('protectionCoverage')]",
+      "protectedIP": "[parameters('protectedIP')]"
+    },
+    "vpublicIPPrefix": {
+      "id": "[parameters('publicIPPrefixId')]"
+    },
+    "vdnsSettings": {
+      "domainNameLabel": "[parameters('domainNameLabel')]",
+      "fqdn": "[concat(parameters('domainNameLabel'),'.',variables('location'),'.cloudapp.azure.com')]"
+    },
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('pubIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-04-01",
+      "location": "[variables('location')]",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "sku": {
+        "name": "[parameters('sku')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+        "publicIPAddressVersion": "[parameters('publicIPAddressVersion')]",
+        "dnsSettings": "[if(empty(parameters('domainNameLabel')),json('null'),variables('vdnsSettings'))]",
+        "ddosSettings": "[if(empty(parameters('ddosCustomPolicyId')),json('null'),variables('vddosSettings'))]",
+        "ipTags": "[parameters('ipTags')]",
+        "ipAddress": "[parameters('ipAddress')]",
+        "publicIPPrefix": "[if(empty(parameters('publicIPPrefixId')),json('null'),variables('vpublicIPPrefix'))]",
+        "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]"
+      },
+      "zones": "[if(empty(parameters('zones')),json('null'),parameters('zones'))]"
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('pubIPName'))]"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+    "actionGroupName": "emailReceiver",
+    "metricAlerts":[
+        {
+            "name" : "Azure Bastion Communication Down",
+            "severity": 0,
+            "threshold": 0,
+            "timeAggregation": "Average",
+            "metricName": "pingmesh",
+            "operator": "GreaterThan",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions":""
+        },
+        {
+            "name" : "Azure Bastion Communication Unhealthy",
+            "severity": 1,
+            "threshold": 1,
+            "timeAggregation": "Average",
+            "metricName": "pingmesh",
+            "operator": "LessThan",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions":""
+        },
+        {
+            "name" : "Azure Bastion Host CPU High",
+            "severity": 2,
+            "threshold": 95,
+            "timeAggregation": "Average",
+            "metricName": "usage_user",
+            "operator": "GreaterThanOrEqual",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions": "Host"
+
+        },
+        {
+            "actionGroupName" : "smsReceiver",
+            "name" : "Azure Bastion Host Session Count High",
+            "severity": 2,
+            "threshold": 21,
+            "timeAggregation": "Total",
+            "metricName": "sessions",
+            "operator": "GreaterThan",
+            "criterionType": "StaticThresholdCriterion",
+            "dimensions": "Host"
+        }
+    ]
+}

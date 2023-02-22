@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "addsObject": {
+           "value": {
+              "adds":[
+                 {
+                    "sku": "Enterprise",
+                    "domainConfigurationType": "FullySynced",
+                    "domainName": "myTempWork.com.au",
+                    "filteredSync": "Disabled",
+                    "notificationSettings": {
+                        "notifyGlobalAdmins": "Enabled",
+                        "notifyDcAdmins": "Enabled",
+                        "additionalRecipients": []
+                    },
+                    "subnetName": "AzureADDSSubnet",
+                    "vnetName": "hub-01"
+                 }
+              ]     
+           }
+        }
+    }
+}

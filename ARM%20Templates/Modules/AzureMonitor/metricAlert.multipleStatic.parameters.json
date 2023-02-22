@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "multi-dimensional metric alert rule"
+        },
+        "alertDescription": {
+            "value": "multi-dimensional metric alert rule created "
+        },
+        "alertSeverity": {
+            "value":3
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "resourceId": {
+            "value": "/subscriptions/replace-with-subscription-id/resourceGroups/replace-with-resourcegroup-name/providers/Microsoft.Storage/storageAccounts/replace-with-storage-account"
+        },
+        "criterion": {
+            "value": {
+                    "name": "Criterion",
+                    "metricName": "Transactions",
+                    "dimensions": [
+                        {
+                            "name":"ResponseType",
+                            "operator": "Include",
+                            "values": ["*"]
+                        },
+                        {
+                            "name":"ApiName",
+                            "operator": "Include",
+                            "values": ["GetBlob", "PutBlob"]    
+                        }
+                    ],
+                    "operator": "GreaterThan",
+                    "threshold": "5",
+                    "timeAggregation": "Total"
+                }
+        },
+        "actionGroupName": {
+            "value": "actiongroupName"
+        }
+    }
+}

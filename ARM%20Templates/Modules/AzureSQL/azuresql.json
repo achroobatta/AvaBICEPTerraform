@@ -1,0 +1,93 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.5.6.12127",
+      "templateHash": "17606057535442789180"
+    }
+  },
+  "parameters": {
+    "serverName": {
+      "type": "string",
+      "defaultValue": "[uniqueString('sql', resourceGroup().id)]",
+      "metadata": {
+        "description": "The name of the SQL logical server."
+      }
+    },
+    "sqlDBName": {
+      "type": "string",
+      "defaultValue": "SampleDB",
+      "metadata": {
+        "description": "The name of the SQL Database."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "sqladministratorLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "The administrator username of the SQL logical server."
+      }
+    },
+    "sqladministratorLoginPassword": {
+      "type": "secureString",
+      "metadata": {
+        "description": "The administrator password of the SQL logical server."
+      }
+    },
+    "sqlDbCount" : {
+      "type" :  "int",
+      "defaultValue" : 2,
+      "minValue" : 2,
+      "maxValue" : 100,
+      "metadata": {
+        "description": "Specifies the number of Azure sql database."
+      }
+    },
+    "sqlDbNameSKUName" : {
+      "type" : "string"
+    },
+    "sqlDBNameSKUtier": {
+      "type": "string"
+    }
+  },
+
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2021-08-01-preview",
+      "name": "[parameters('serverName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "administratorLogin": "[parameters('sqladministratorLogin')]",
+        "administratorLoginPassword": "[parameters('sqladministratorLoginPassword')]"
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2021-08-01-preview",
+      "name": "[concat(parameters('serverName'), '/', parameters('sqlDBName'), copyIndex('dbCopy', 1))]",
+      "location": "[parameters('location')]",
+      "properties": {},
+      "sku": {
+        "name": "[parameters('sqlDbNameSKUName')]",
+        "tier": "[parameters('sqlDBNameSKUtier')]"
+      },
+      "copy" : {
+        "name": "dbCopy",
+        "count":"[parameters('sqlDbCount')]",
+        "mode": "Serial"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+      ]
+    }
+  ]
+}

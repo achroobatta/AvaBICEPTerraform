@@ -1,0 +1,29 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+- stage: ${{parameters.stageName}}
+  jobs:
+  - job: Run_Checkov
+    steps:
+    - task: AzureCLI@2
+      name: Run_Checkov
+      inputs:
+        azureSubscription: ${{parameters.serviceConnection}}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          if [[ `which checkov 2>/dev/null` ]]
+          then
+            echo 'checkov installed'
+          else
+            echo 'checkov not installed - installing ...'
+            sudo pip3 install checkov --verbose
+          fi
+          mkdir bicep
+          for FILE in $(find ./Deployment/bicep-templates -name '*.module.bicep'); do cp $FILE ./bicep; done
+          checkov --directory ./bicep --skip-check CKV_AZURE_41,CKV_AZURE_35,CKV_AZURE_12,CKV_AZURE_1

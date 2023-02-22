@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+       "policyAssignments": {
+        "value": [
+             {
+                "name": "Policy1",
+                "Id": "726aca4c-86e9-4b04-b0c5-073027359532"
+             },
+             {
+                "name": "Policy2",
+                "Id": "726aca4c-86e9-4b04-b0c5-073027359530"               
+             }
+        ]
+      }
+    }
+}

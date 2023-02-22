@@ -1,0 +1,73 @@
+parameters:
+- name: environmentType
+  type: string
+- name: stageName
+  type: string
+- name: serviceConnection
+  type: string
+- name: keyVaultName
+  type: string
+- name: secretsFilter
+  type: string
+
+
+stages:
+- stage: ${{parameters.stageName}}
+  condition: succeeded()    # no point testing if the deployment failed
+  pool: LinuxPool # on premises running required to run network tests
+  variables:
+  - group: inspec-${{parameters.environmentType}} #variable group depends on environment
+  jobs:
+  - job: Inspec_tests
+    steps:
+      - task: UseRubyVersion@0
+        displayName: 'Install Ruby'
+        inputs:
+          versionSpec: '>= 2.5'
+          addToPath: true
+
+      - script: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
+        displayName: 'Install Inspec'
+                    
+      - task: Bash@3
+        displayName: 'Run azure inspec tests'
+        inputs:
+          targetType: inline
+          script: |
+            export AZURE_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
+            export AZURE_CLIENT_ID=$(AZURE_CLIENT_ID)
+            export AZURE_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+            export AZURE_TENANT_ID=$(AZURE_TENANT_ID)
+            cp ./Deployment/inspec-tests/azure/environments/${{parameters.environmentType}}/*.yml ./Deployment/inspec-tests/azure/files/
+            inspec exec ./Deployment/inspec-tests/azure -t azure:// --chef-license=accept --reporter cli junit2:test-azure.xml
+      - task: PublishTestResults@2
+        displayName: Publish inspec test results
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: '**/test-azure.xml'
+          mergeTestResults: true
+      #TODO adjust this to work for all environments - currently only runs in prod
+      - task: AzureKeyVault@2
+        displayName: 'Azure Key Vault: Creds to run WinRM'
+        condition: eq('${{parameters.environmentType}}','prod')
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          keyVaultName: ${{parameters.KeyVaultName}}
+          secretsFilter: ${{parameters.secretsFilter}}
+      - task: Bash@3
+        displayName: 'Run server inspec tests'
+        condition: eq('${{ parameters.environmentType }}', 'prod')
+        inputs:
+          targetType: inline
+          script: |
+            cp ./Deployment/inspec-tests/servers/environments/${{parameters.environmentType}}/servers.yml ./Deployment/inspec-tests/servers/
+            readarray -t servers < <(yq '.[].name' ./Deployment/inspec-tests/servers/servers.yml) 
+            readarray -t roles < <(yq '.[].role' ./Deployment/inspec-tests/servers/servers.yml)
+            length=${#servers[@]}
+            for ((j=0;j<${length};j++)); do inspec exec ./Deployment/inspec-tests/servers/${roles[j]} -b winrm  --host ${servers[j]} --password '$(svcwinrm)' --user ${{parameters.secretsFilter}} --chef-license=accept --reporter cli junit2:test-${servers[j]}-${roles[j]}.xml; done
+      - task: PublishTestResults@2
+        displayName: Publish server inspec test results
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: '**/test-*.xml'
+          mergeTestResults: true

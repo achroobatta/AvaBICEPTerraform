@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiVersion" : {
+            "type": "string"
+        },
+        "domainConfigurationType": {
+            "type": "string"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "filteredSync": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "vnetResourceGroup": {
+            "type": "string"
+        },
+        "ntlmV1": {
+            "type": "string"
+        },
+        "tlsV1": {
+            "type": "string"
+        },
+        "syncNtlmPasswords": {
+            "type": "string"
+        },
+        "syncKerberosPasswords": {
+            "type": "string"
+        },
+        "syncOnPremPasswords": {
+            "type": "string"
+        },
+        "kerberosRc4Encryption": {
+            "type": "string"
+        },
+        "kerberosArmoring": {
+            "type": "string"
+        },
+        "notifyGlobalAdmins": {
+            "type": "string"
+        },
+        "notifyDcAdmins": {
+            "type": "string"
+        },
+        "additionalRecipients": {
+            "type": "array"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "type": "Microsoft.AAD/domainServices",
+            "name": "[parameters('domainName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "domainName": "[parameters('domainName')]",
+                "sku": "[parameters('sku')]",
+                "replicaSets": [
+                    {
+                      "location": "[parameters('location')]",
+                      "subnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vnetResourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                    }
+                  ],
+                
+                "filteredSync": "[parameters('filteredSync')]",
+                
+                "domainConfigurationType": "[parameters('domainConfigurationType')]",
+             
+                "notificationSettings": {
+                    "notifyGlobalAdmins": "[parameters('notifyGlobalAdmins')]",
+                    "notifyDcAdmins": "[parameters('notifyDcAdmins')]",
+                    "additionalRecipients": "[parameters('additionalRecipients')]"
+                    },
+
+                "domainSecuritySettings": {
+                        "ntlmV1": "[parameters('ntlmV1')]",
+                        "tlsV1": "[parameters('tlsV1')]",
+                        "syncNtlmPasswords": "[parameters('syncNtlmPasswords')]",
+                        "syncKerberosPasswords": "[parameters('syncKerberosPasswords')]",
+                        "syncOnPremPasswords": "[parameters('syncOnPremPasswords')]",
+                        "kerberosRc4Encryption": "[parameters('kerberosRc4Encryption')]",
+                        "kerberosArmoring": "[parameters('kerberosArmoring')]"
+                      }
+            }
+        }
+    ],
+    "outputs": {}
+}

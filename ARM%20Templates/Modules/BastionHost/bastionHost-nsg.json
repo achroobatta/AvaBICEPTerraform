@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "nsgName": {
+      "type": "String",
+      "metadata": {
+        "description": "(required) The name of the network security group."
+      }
+    },
+    "location": {
+      "type": "string"
+    },
+    "vnetName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subnetId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/AzureBastionSubnet')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-04-01",
+      "name": "[parameters('nsgName')]",
+      "location": "[parameters('location')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "properties": {
+        "securityRules": [
+          {
+              "name": "GateWayManagerAllow443",
+              "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "properties":{
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "destinationPortRange": "443",
+                "access": "Allow",
+                "direction": "Inbound",
+                "priority": 100
+              }
+          },
+          {
+            "name": "AllowOutbound443",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "properties":{
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "AzureCloud",
+                "destinationPortRange": "443",
+                "access": "Allow",
+                "direction": "Outbound",
+                "priority": 110
+              }
+          },
+          {
+            "name": "AllowRDPandSSH",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+              "properties":{
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "VirtualNetwork",
+                "destinationPortRanges": [
+                    "3389",
+                    "22"
+                ],
+                "access": "Allow",
+                "direction": "Outbound",
+                "priority": 120
+              }
+          }
+        ],
+        "subnets": [
+          {
+            "id": "[variables('subnetId')]"
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgName'))]"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "agents":[
+    {
+    "name" : "azurePolicy",
+    "publisher": "Microsoft.GuestConfiguration",
+    "type": "ConfigurationforWindows",
+    "typeHandlerVersion": "1.0",
+    "enableAutomaticUpgrade": true
+    },
+    {
+    "name" : "dependencyAgent",
+    "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+    "type": "DependencyAgentWindows",
+    "typeHandlerVersion": "9.10",
+    "enableAutomaticUpgrade": true
+    },
+    {
+    "name" : "monitoringAgent",
+    "publisher": "Microsoft.Azure.Monitor",
+    "type": "AzureMonitorWindowsAgent",
+    "typeHandlerVersion" : "1.2",
+    "enableAutomaticUpgrade": true
+    }
+  ]
+}

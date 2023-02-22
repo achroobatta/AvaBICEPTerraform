@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "routeTableName": {
+            "value": "suroutetable" 
+        },
+        "location": {
+            "value": "australiaeast" 
+        },
+        "disableBgpRoutePropagation": {
+            "value": false
+        },
+        "routes": {
+            "value": [
+                {
+                        "name": "rule1",
+                        "addressPrefix" : "144.136.1.0/24",
+                        "hasBgpOverride": "false",
+                        "nextHopType" : "Internet",
+                        "nextHopIpAddress": ""
+                    
+                },
+                {
+                        "name": "rule2",
+                        "addressPrefix" : "145.136.1.0/24",
+                        "hasBgpOverride": "false",
+                        "nextHopType" : "Internet",
+                        "nextHopIpAddress": ""
+                    
+                }
+            ]
+        },
+        "enableDeleteLock": {
+            "value": false
+        }
+    }
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to add/change access policies to a key vault resource."
+  },
+  "parameters": {
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name used for your key vault resource"
+      }
+    },
+    "operation": {
+      "defaultValue": "add",
+      "allowedValues": [
+        "add",
+        "replace",
+        "remove"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(required) The operation to perform on the key vaults access policies"
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. - globally unique identifier."
+      }
+    },
+    "objectId": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies."
+      }
+    },
+    "secretsPermissions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "(optional) Permissions to secrets. If desiring all secrets permissions, you may specify 'all' as the only element in the array."
+      }
+    },
+    "certificatesPermissions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "(optional) Permissions to certificates. If desiring all certificates permissions, you may specify 'all' as the only element in the array."
+      }
+    },
+    "keysPermissions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "(optional) Permissions to keys. If desiring all keys permissions, you may specify 'all' as the only element in the array."
+      }
+    },
+    "storagePermissions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "(optional) Permissions to storage. If desiring all storage permissions, you may specify 'all' as the only element in the array."
+      }
+    }
+  },
+  "variables": {
+    "secretsPermissionsAll": [
+      "get",
+      "list",
+      "set",
+      "delete",
+      "backup",
+      "restore",
+      "recover",
+      "purge"
+    ],
+    "certificatesPermissionsAll": [
+      "get",
+      "list",
+      "delete",
+      "create",
+      "import",
+      "update",
+      "managecontacts",
+      "getissuers",
+      "listissuers",
+      "setissuers",
+      "deleteissuers",
+      "manageissuers",
+      "recover",
+      "purge",
+      "backup",
+      "restore"
+    ],
+    "keysPermissionsAll": [
+      "encrypt",
+      "decrypt",
+      "wrapKey",
+      "unwrapKey",
+      "sign",
+      "verify",
+      "get",
+      "list",
+      "create",
+      "update",
+      "import",
+      "delete",
+      "backup",
+      "restore",
+      "recover",
+      "purge"
+    ],
+    "storagePermissionsAll": [
+      "get",
+      "list",
+      "delete",
+      "set",
+      "update",
+      "regeneratekey",
+      "recover",
+      "purge",
+      "backup",
+      "restore",
+      "setsas",
+      "listsas",
+      "getsas",
+      "deletesas"
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('keyVaultName'),'/', parameters('operation'))]",
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "properties": {
+        "accessPolicies": [
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('objectId')]",
+            "permissions": {
+              "keys": "[if(contains(parameters('keysPermissions'),'all'),variables('keysPermissionsAll'),parameters('keysPermissions'))]",
+              "storage": "[if(contains(parameters('storagePermissions'),'all'),variables('storagePermissionsAll'),parameters('storagePermissions'))]",
+              "secrets": "[if(contains(parameters('secretsPermissions'),'all'),variables('secretsPermissionsAll'),parameters('secretsPermissions'))]",
+              "certificates": "[if(contains(parameters('certificatesPermissions'),'all'),variables('certificatesPermissionsAll'),parameters('certificatesPermissions'))]"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}

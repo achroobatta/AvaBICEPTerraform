@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "description": "The template is used to create the peering connection to expressroute"
+    },
+    "parameters": {
+      "circuitName": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Name of the ExpressRoute circuit"
+        }
+      },
+      "peerASN": {
+        "type": "int",
+        "defaultValue": 65001,
+        "metadata": {
+          "description": "autonomous system number used to create private peering between the customer edge router and MSEE routers"
+        }
+      },
+      "primaryPeerAddressPrefix": {
+        "type": "string",
+        "defaultValue": "192.168.10.16/30",
+        "metadata": {
+          "description": "point-to-point network prefix of primary link between the customer edge router and MSEE router"
+        }
+      },
+      "secondaryPeerAddressPrefix": {
+        "type": "string",
+        "defaultValue": "192.168.10.20/30",
+        "metadata": {
+          "description": "point-to-point network prefix of secondary link between the customer edge router and MSEE router"
+        }
+      },
+      "vlanId": {
+        "type": "int",
+        "defaultValue": 100,
+        "metadata": {
+          "description": "VLAN Id used between the customer edge routers and MSEE routers. primary and secondary link have the same VLAN Id"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Network/expressRouteCircuits/peerings",
+        "apiVersion": "2021-05-01",
+        "name": "[format('{0}/{1}', parameters('circuitName'), 'AzurePrivatePeering')]",
+        "properties": {
+          "peeringType": "AzurePrivatePeering",
+          "peerASN": "[parameters('peerASN')]",
+          "primaryPeerAddressPrefix": "[parameters('primaryPeerAddressPrefix')]",
+          "secondaryPeerAddressPrefix": "[parameters('secondaryPeerAddressPrefix')]",
+          "vlanId": "[parameters('vlanId')]"
+        }
+      }
+    ],
+    "outputs": {
+      "CircuitName": {
+        "type": "string",
+        "value": "[parameters('circuitName')]"
+      }
+    }
+  }

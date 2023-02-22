@@ -1,0 +1,18 @@
+# resource groups for AustraliaEast
+- name: rg-prod-ae-network
+  location: australiaeast
+- name: rg-prod-ae-compute
+  location: australiaeast
+- name: rg-prod-ae-security
+  location: australiaeast
+- name: rg-prod-ae-storage
+  location: australiaeast
+# resource groups for AustraliaSouthEast
+- name: rg-prod-ase-network
+  location: australiasoutheast
+- name: rg-prod-ase-compute
+  location: australiasoutheast
+- name: rg-prod-ase-security
+  location: australiasoutheast
+- name: rg-prod-ase-storage
+  location: australiasoutheast

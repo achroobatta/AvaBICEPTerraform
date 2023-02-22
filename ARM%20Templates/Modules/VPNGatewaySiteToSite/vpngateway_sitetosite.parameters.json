@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vpnType": {
+            "value": "RouteBased"
+        },
+        "localGatewayName": {
+            "value": "localGateway"
+        },
+        "localGatewayIpAddress": {
+            "value": "1.1.1.1"
+        },
+        "localAddressPrefix": {
+            "value": [
+              "192.168.0.0/16",
+              "172.16.0.0/12"
+            ]
+        },
+        "virtualNetworkName": {
+            "value": "azureVnet"
+        },
+        "gatewayPublicIPName": {
+            "value": "sugatewayIPName"
+        },
+        "gatewayName": {
+            "value": "azureGateway"
+        },
+        "gatewaySku": {
+            "value": "Basic"
+        },
+        "connectionName": {
+            "value": "Azure2Other"
+        },
+        "sharedKey": {
+            "value": "suadmin" 
+        },
+        "location": {
+            "value": "" 
+        },
+        "vnetGatewayConfigName": {
+            "value": "vnetGatewayConfig"
+        },
+        "privateIPAllocationMethod": {
+            "value": "Dynamic"
+        },
+        "enableBgp": {
+            "value": "false"
+        }
+    }
+}

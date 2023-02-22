@@ -1,0 +1,2 @@
+- name: vgw-prod-ae-hub-01
+  resource_group: rg-prod-ae-network

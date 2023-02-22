@@ -1,0 +1,67 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+  - stage: ${{parameters.stageName}}
+    # do not run prod unless in master branch
+    condition: or(not(eq('${{ parameters.environmentType }}', 'prod')), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+
+    # Configure Partner Admin Link
+      - template: ../jobs/deploy-pal.yml
+        parameters:
+          job: ${{parameters.stageName}}_Configure_PAL
+          serviceConnection: ${{parameters.serviceConnection}}
+          partnerId: 550733
+
+    # Tenant level role definitions
+      # - template: ../jobs/deploy-roleDefinitions.yml
+      #   parameters:
+      #     serviceConnection: ${{parameters.serviceConnection}}
+      #     resourceType: roleDefinitions
+      #     job: ${{parameters.stageName}}_Tenant_RoleDefinitions
+      #     location: AustraliaEast
+      #     scope: tenant
+      # - template: ../jobs/deploy-policyDefinitions.yml
+      #   parameters:
+      #     serviceConnection: ${{parameters.serviceConnection}}
+      #     resourceType: policyDefinitions
+      #     job: ${{parameters.stageName}}_MG_PolicyDefinitions
+      #     location: AustraliaEast
+      #     managementGroup: MG02 #TODO may look at this later
+      #     scope: mg
+    # Assign policy initiatives at a management group level
+    #TODO Need to add exclusions and fix flowlog deployment error 
+      # - template: ../jobs/deploy-policyAssignments.yml
+      #   parameters:
+      #     serviceConnection: ${{parameters.serviceConnection}}
+      #     resourceType: policyAssignments
+      #     jobDependsOn: ${{parameters.stageName}}_MG_PolicyDefinitions
+      #     job: ${{parameters.stageName}}_MG_PolicyAssignments
+      #     location: AustraliaEast
+      #     managementGroup: MG02 #TODO may look at this later
+      #     scope: mg
+    # Deploy Galleries
+      - template: ../jobs/deploy-galleries.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: galleries
+          job: ${{parameters.stageName}}_galleries
+          location: AustraliaEast
+          scope: group
+      #monitoring - Note that this job is tenant level but has a dependency on resource groups in the hub
+      - template: ../jobs/deploy-monitoring.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: actionGroups
+          job: ${{parameters.stageName}}_AzureMonitoring
+          location: AustraliaEast
+          scope: group

@@ -1,0 +1,42 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: hubServiceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+  - stage: ${{parameters.stageName}}
+    # do not run prod unless in master branch
+    # only run if previous stage has completed successfully
+    condition: and(or(not(eq('${{ parameters.environmentType }}', 'prod')), eq(variables['Build.SourceBranch'], 'refs/heads/master')),succeeded())
+    jobs:
+    # For Hub build the serviceConnection & hubServiceConnection are the same. This is not true for spoke
+
+      # app service plan and service 
+      - template: ../jobs/deploy-appService.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          hubserviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          osType: linux
+          vgs: ../vgs/global.yml
+          resourceType: appService
+          job: ${{parameters.stageName}}_AppServiceLinux_AustraliaEast
+          location: AustraliaEast
+          scope: group
+
+      # app service plan and service 
+      # - template: ../jobs/deploy-appService.yml
+      #   parameters:
+      #     serviceConnection: ${{parameters.serviceConnection}}
+      #     hubserviceConnection: ${{parameters.serviceConnection}}
+      #     environmentType: ${{parameters.environmentType}}
+      #     osType: windows
+      #     vgs: ../vgs/global.yml
+      #     resourceType: appService
+      #     job: ${{parameters.stageName}}_AppServiceWindows_AustraliaEast
+      #     location: AustraliaEast
+      #     scope: group

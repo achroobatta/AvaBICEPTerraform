@@ -1,0 +1,25 @@
+{
+  "agents":[
+    {
+    "name" : "azurePolicy",
+    "publisher": "Microsoft.GuestConfiguration",
+    "type": "ConfigurationforLinux",
+    "typeHandlerVersion": "1.0",
+    "enableAutomaticUpgrade": true
+    },
+    {
+    "name" : "dependencyAgent",
+    "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+    "type": "DependencyAgentLinux",
+    "typeHandlerVersion": "9.5",
+    "enableAutomaticUpgrade": true
+    },
+    {
+    "name" : "monitoringAgent",
+    "publisher": "Microsoft.Azure.Monitor",
+    "type": "AzureMonitorLinuxAgent",
+    "typeHandlerVersion" : "1.15",
+    "enableAutomaticUpgrade": true
+    }
+]
+}

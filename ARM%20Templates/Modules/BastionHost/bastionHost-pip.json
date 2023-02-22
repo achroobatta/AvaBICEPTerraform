@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "publicIpAddressName": {
+        "type": "string",
+        "metadata": {
+          "description": "Specifies a name for generating resource names."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Azure region for Bastion and virtual network"
+        }
+      }
+    },
+    "variables": {
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2020-05-01",
+        "name": "[parameters('publicIpAddressName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard"
+        },
+        "properties": {
+          "publicIPAllocationMethod": "static"
+        }
+      }
+    ]
+  }

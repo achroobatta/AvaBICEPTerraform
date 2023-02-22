@@ -1,0 +1,89 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "metricAlertsObject": {
+            "value": { 
+                "metricAlerts":[
+                    {
+                        "actionGroupName" : "smsReceiver",
+                        "name" : "Azure Bastion Communication Down",
+                        "autoMitigate": true,
+                        "enabled": true,
+                        "severity": 0,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT5M",
+                        "scopes": "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3/resourceGroups/rg-prod-ae-network/providers/Microsoft.Network/bastionHosts/bst-prod-ae-hub-01",
+                        "targetResourceType": "Microsoft.Network/bastionHosts",
+                        "targetResourceRegion": "AustraliaEast",
+                        "threshold": 0,
+                        "metricNamespace": "Microsoft.Network/bastionHosts",
+                        "timeAggregation": "Average",
+                        "metricName": "pingmesh",
+                        "operator": "GreaterThan",
+                        "criterionType": "StaticThresholdCriterion",
+                        "dimensions":""
+                    },
+                    {
+                        "actionGroupName" : "smsReceiver",
+                        "name" : "Azure Bastion Communication Unhealthy",
+                        "autoMitigate": true,
+                        "enabled": true,
+                        "severity": 1,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT5M",
+                        "scopes": "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3/resourceGroups/rg-prod-ae-network/providers/Microsoft.Network/bastionHosts/bst-prod-ae-hub-01",
+                        "targetResourceType": "Microsoft.Network/bastionHosts",
+                        "targetResourceRegion": "AustraliaEast",
+                        "threshold": 1,
+                        "metricNamespace": "Microsoft.Network/bastionHosts",
+                        "timeAggregation": "Average",
+                        "metricName": "pingmesh",
+                        "operator": "LessThan",
+                        "criterionType": "StaticThresholdCriterion",
+                        "dimensions":""
+                    },
+                    {
+                        "actionGroupName" : "smsReceiver",
+                        "name" : "Azure Bastion Host CPU High",
+                        "autoMitigate": true,
+                        "enabled": true,
+                        "severity": 2,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT5M",
+                        "scopes": "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3/resourceGroups/rg-prod-ae-network/providers/Microsoft.Network/bastionHosts/bst-prod-ae-hub-01",
+                        "targetResourceType": "Microsoft.Network/bastionHosts",
+                        "targetResourceRegion": "AustraliaEast",
+                        "threshold": 95,
+                        "metricNamespace": "Microsoft.Network/bastionHosts",
+                        "timeAggregation": "Average",
+                        "metricName": "usage_user",
+                        "operator": "GreaterThanOrEqual",
+                        "criterionType": "StaticThresholdCriterion",
+                        "dimensions": "Host"
+
+                    },
+                    {
+                        "actionGroupName" : "smsReceiver",
+                        "name" : "Azure Bastion Host Session Count High",
+                        "autoMitigate": true,
+                        "enabled": true,
+                        "severity": 2,
+                        "evaluationFrequency": "PT5M",
+                        "windowSize": "PT5M",
+                        "scopes": "/subscriptions/8a1389fe-c983-4fc3-99ad-b7413829bcd3/resourceGroups/rg-prod-ae-network/providers/Microsoft.Network/bastionHosts/bst-prod-ae-hub-01",
+                        "targetResourceType": "Microsoft.Network/bastionHosts",
+                        "targetResourceRegion": "AustraliaEast",
+                        "threshold": 21,
+                        "metricNamespace": "Microsoft.Network/bastionHosts",
+                        "timeAggregation": "Total",
+                        "metricName": "sessions",
+                        "operator": "GreaterThan",
+                        "criterionType": "StaticThresholdCriterion",
+                        "dimensions": "Host"
+                    }
+                ]
+            }
+        }
+    }
+}

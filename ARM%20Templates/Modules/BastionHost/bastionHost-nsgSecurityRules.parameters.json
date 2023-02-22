@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsgName": {
+            "value": "sampleNsg" 
+        },
+        "nsgRules": {
+            "value": [
+                         {
+                            "name": "GateWayManagerAllow443",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "100"
+                        },
+                        {
+                            "name": "AllowOutbound443",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "AzureCloud",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "priority": "110"
+                        },
+                        {
+                            "name": "AllowRDPandSSH",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "destinationPortRange": [
+                                "3389",
+                                "22"
+                            ],
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "priority": "110"
+                        }
+
+            ]
+        }
+    }
+}

@@ -1,0 +1,62 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: publicIpAddressName
+    type: string
+  - name: vnetName
+    type: string
+  - name: bastionSubnetIpPrefix
+    type: string
+  - name: nsgName
+    type: string
+  - name: bastionHostName
+    type: string
+  - name: addressPrefix
+    type: string
+
+steps:    
+  - template: components/deploy-bastion-pip.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-publicIpAddressName ${{parameters.publicIpAddressName}}'
+
+  - template: components/deploy-bastion-vnet.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-vnetName ${{parameters.vnetName}} -addressPrefixes ["${{parameters.addressPrefix}}"]'
+
+  - template: components/deploy-bastion-subnet.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-vnetName ${{parameters.vnetName}} -bastionSubnetIpPrefix ${{parameters.bastionSubnetIpPrefix}}'
+
+  - template: components/deploy-bastion-nsg.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-nsgName ${{parameters.nsgName}} -vnetName ${{parameters.vnetName}}'
+
+  - template: components/deploy-bastion-host.yml
+    parameters:
+      serviceConnection: ${{parameters.serviceConnection}}
+      subscriptionId: ${{parameters.subscriptionId}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      location: ${{parameters.location}}
+      overrideParameters: '-vnetName ${{parameters.vnetName}} -publicIpAddressName ${{parameters.publicIpAddressName}} -bastionHostName ${{parameters.bastionHostName}}'

@@ -1,0 +1,22 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: partnerId
+    type: string
+  - name: job
+    type: string
+    
+  jobs:
+    - job: ${{parameters.job}}
+      steps:         
+        - task: AzureCLI@2 # Deploy scheduled query rules
+          displayName: Enable Partner Admin Link 
+          inputs:
+            azureSubscription: ${{parameters.serviceConnection}}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: | # location has to be global
+              az extension add --name managementpartner
+              registeredId=$(az managementpartner show --partner-id ${{parameters.partnerId}} --query [partnerId] --output tsv)
+              if [ -z "$registeredId" ] ; then az managementpartner create --partner-id ${{parameters.partnerId}} ; else echo "PAL already exists for this service principal"; fi
+            

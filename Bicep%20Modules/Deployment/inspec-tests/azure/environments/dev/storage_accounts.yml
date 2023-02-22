@@ -1,0 +1,6 @@
+- name: sadevaediags01
+  resource_group: rg-dev-ae-storage
+- name: sadevaefile01
+  resource_group: rg-dev-ae-storage
+- name: sadevasediags01
+  resource_group: rg-dev-ase-storage

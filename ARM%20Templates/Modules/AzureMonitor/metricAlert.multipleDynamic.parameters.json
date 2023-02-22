@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "MetricAlertDynamicThreshold"
+        },
+        "alertDescription": {
+            "value": "multi-dimensional metric alert with Dynamic Thresholds"
+        },
+        "alertSeverity": {
+            "value":3
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "resourceId": {
+            "value": "/subscriptions/replace-with-subscription-id/resourceGroups/replace-with-resourcegroup-name/providers/Microsoft.Storage/storageAccounts/replace-with-storage-account"
+        },
+        "criterion": {
+            "value": {
+                    "criterionType": "DynamicThresholdCriterion",
+                    "name": "1st criterion",
+                    "metricName": "Transactions",
+                    "dimensions": [
+                        {
+                            "name":"ResponseType",
+                            "operator": "Include",
+                            "values": ["*"]
+                        },
+                        {
+                            "name":"ApiName",
+                            "operator": "Include",
+                            "values": ["GetBlob", "PutBlob"]
+                        }
+                    ],
+                    "operator": "GreaterOrLessThan",
+                    "alertSensitivity": "Medium",
+                    "failingPeriods": {
+                        "numberOfEvaluationPeriods": "4",
+                        "minFailingPeriodsToAlert": "3"
+                    },
+                    "timeAggregation": "Total"
+                }
+        },
+        "actionGroupName": {
+            "value": "actiongroupname"
+        }
+    }
+}

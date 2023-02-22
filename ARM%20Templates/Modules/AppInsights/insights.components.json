@@ -1,0 +1,119 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.1",
+  "metadata": {
+    "comments": "Template used create an application insights resource."
+  },
+  "parameters": {
+    "location": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource. The location of the hosting resource group will be used if this value is left blank."
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name to be used for your application insights resource."
+      }
+    },
+    "HockeyAppId": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The unique application ID created when a new application is added to HockeyApp, used for communications with HockeyApp."
+      }
+    },
+    "SamplingPercentage": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry."
+      }
+    },
+    "kind": {
+      "defaultValue": "web",
+      "allowedValues": [
+        "web",
+        "java",
+        "other"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(required) The kind of application that this component refers to, used to customize UI. This value is a freeform string, values should typically be one of the following: web, ios, other, store, java, phone."
+      }
+    },
+    "tags_CreationDate": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Tag to store the provided resource creation date."
+      }
+    },
+    "tags_Environment": {
+      "defaultValue": "Dev",
+      "type": "string",
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "Prod"
+      ],
+      "metadata": {
+        "description": "(optional) Tag to indicate the environment to which this resource is attached. Allowed values: Dev, Test, Prod. Default: Dev."
+      }
+    },
+    "tags": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "location": "[if(equals(parameters('location'),''),resourceGroup().location,parameters('location'))]",
+    "HockeyAppId": "[if(empty(parameters('HockeyAppId')), json('null'), parameters('HockeyAppId'))]",
+    "SamplingPercentage": "[if(empty(parameters('SamplingPercentage')), json('null'), parameters('SamplingPercentage'))]",
+    "component_properties": {
+      "defaultValue": {
+        "Application_Type": "web",
+        "Flow_Type": "Redfield",
+        "Request_Source": "IbizaAIExtension",
+        "HockeyAppId": "[variables('HockeyAppId')]",
+        "SamplingPercentage": "[variables('SamplingPercentage')]"
+      }
+    },
+    "tags": {
+      "CreationDate": "[parameters('tags_CreationDate')]",
+      "Environment": "[parameters('tags_Environment')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "microsoft.insights/components",
+      "kind": "[parameters('kind')]",
+      "name": "[parameters('appInsightsName')]",
+      "apiVersion": "2015-05-01",
+      "location": "[variables('location')]",
+      "tags": "[if(empty(parameters('tags')),variables('tags'),parameters('tags'))]",
+      "scale": null,
+      "properties": "[variables('component_properties')]",
+      "dependsOn": []
+    }
+  ],
+  "outputs": {
+    "connectionString": {
+      "value": "[reference(resourceId('microsoft.insights/components', parameters('appInsightsName'))).ConnectionString]",
+      "type": "string"
+    },
+    "resourceId": {
+      "value": "[resourceId('microsoft.insights/components', parameters('appInsightsName'))]",
+      "type": "string"
+    },
+    "instrumentationKey": {
+      "value": "[reference(resourceId('microsoft.insights/components', parameters('appInsightsName'))).InstrumentationKey]",
+      "type": "string"
+    }
+  }
+}

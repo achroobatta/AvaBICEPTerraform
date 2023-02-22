@@ -1,0 +1,13 @@
+#Australia East
+- name: vmprodaedc01.avanoso.com
+  role: aadConnect_server
+- name: vmprodaedc01.avanoso.com
+  role: domain_controller
+- name: vmprodaedc02.avanoso.com
+  role: domain_controller
+- name: vmprodaepki01.avanoso.com
+  role: windows
+- name: vmprodaepaw01.avanoso.com
+  role: windows
+- name: vmprodaesccm01.avanoso.com
+  role: windows

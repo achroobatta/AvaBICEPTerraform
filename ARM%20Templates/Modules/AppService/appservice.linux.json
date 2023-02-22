@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to create a app service for linux."
+  },
+  "parameters": {
+    "webAppName": {
+      "type": "string",
+      "minLength": 2,
+      "metadata": {
+        "description": "(required) Web app name."
+      }
+    },
+    "aspPortalName": {
+      "type": "string",
+      "minLength": 2,
+      "metadata": {
+        "description": "(required) app service plan portal name."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "(required) Location for all resources."
+      }
+    },
+    "linuxFxVersion": {
+      "type": "string",
+      "defaultValue": "DOTNETCORE|3.0",
+      "metadata": {
+        "description": "(optional) The Runtime stack of current web app"
+      }
+    },
+    "repoUrl": {
+      "type": "string",
+      "defaultValue": " ",
+      "metadata": {
+        "description": "(optional) Git Repo URL"
+      }
+    }
+  },
+  "variables": {
+    "aspPortalNameId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/serverfarms/','asp-',parameters('aspPortalName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('webAppName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "httpsOnly": true,
+        "serverFarmId": "[variables('aspPortalNameId')]",
+        "siteConfig": {
+          "linuxFxVersion": "[parameters('linuxFxVersion')]",
+          "minTlsVersion": "1.2",
+          "ftpsState": "FtpsOnly"
+        }
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      }
+    },
+    {
+      "condition": "[contains(parameters('repoUrl'), 'http')]",
+      "type": "Microsoft.Web/sites/sourcecontrols",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/{1}', parameters('webAppName'), 'web')]",
+      "properties": {
+        "repoUrl": "[parameters('repoUrl')]",
+        "branch": "master",
+        "isManualIntegration": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+      ]
+    }
+  ]
+}

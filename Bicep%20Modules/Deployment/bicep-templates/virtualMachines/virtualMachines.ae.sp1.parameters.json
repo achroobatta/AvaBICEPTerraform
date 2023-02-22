@@ -1,0 +1,49 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vmObject": {
+            "value": { 
+                "vm":[
+                    {
+                        "name": "dc03",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2022-datacenter-g2",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "adds-servers",
+                        "virtualNetwork": "spoke-01",
+                        "subnet": "dc-01",
+                        "applicationSecurityGroup": "adds-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+
+                    },
+                    {
+                        "name": "mm01",
+                        "osType": "Windows",
+                        "vmSize": "Standard_B2ms",
+                        "imageReference":{
+                            "offer": "windows-11",
+                            "publisher": "MicrosoftWindowsDesktop",
+                            "sku": "win11-21h2-ent",
+                            "version": "latest"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "availabilitySet": "migration-workstation",
+                        "virtualNetwork": "spoke-01",
+                        "subnet": "dc-01",
+                        "applicationSecurityGroup": "adds-servers",
+                        "storageAccountType": "Standard_LRS",
+                        "disks": []
+                        }
+                ]
+            }
+        }
+    }
+}

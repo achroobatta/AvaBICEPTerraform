@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "adminuser"
+        },
+        "adminPassword": {
+            "value": "@testPassword1234"
+        },
+        "OSVersion": {
+            "value": "2022-datacenter-azure-edition-core"
+        },
+        "vmSize": {
+            "value": "Standard_D2s_v5"
+        },
+        "location": {
+            "value": "australiaeast"
+        },
+        "numberOfDataDisks": {
+            "value": 1
+        },
+        "sizeOfDataDisksInGB": {
+            "value": 100
+        },
+        "osDiskStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "vmName": {
+            "value": "newWindowsVM"
+        },
+        "computerHostName": {
+            "value": "HostOSName"
+        },
+        "nicName": {
+            "value": "vbnic"
+        }
+    }
+}

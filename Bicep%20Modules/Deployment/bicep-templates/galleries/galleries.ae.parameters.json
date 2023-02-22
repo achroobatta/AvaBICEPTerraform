@@ -1,0 +1,20 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "galleryObject": {
+            "value":{
+                    "name" : "galleryprodaecompute",
+                    "description": "Azure Compute Gallery for Avanoso",
+                    "imageOsType": "Linux",
+                    "imageOsState": "Specialized",
+                    "imageDefinitionname": "sailpointVAImage",
+                    "imageDefinitionPublisher": "Avanoso",
+                    "imageDefinitionOffer": "Sailpoint",
+                    "imageDefinitionSku": "VirtualAppliance",
+                    "imageVersionName": "1.0.0",
+                    "id": "/subscriptions/c40719b8-c84c-4345-8fce-25b3d8ef3c4d/resourceGroups/rg-dev-ae-compute/providers/Microsoft.Compute/virtualMachines/vmdevaeva01"
+                }
+        }
+    }
+}

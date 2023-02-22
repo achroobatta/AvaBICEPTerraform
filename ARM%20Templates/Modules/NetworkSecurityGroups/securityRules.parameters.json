@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsgName": {
+            "value": "sampleNsg" 
+        },
+        "nsgRules": {
+            "value": [
+                         {
+                            "name": "AllowInboundSQL",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "10.1.0.0/24",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "1433",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "100"
+                        },
+                        {
+                            "name": "AllowInboundOracle",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "10.1.0.0/24",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "1521",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "110"
+                        }
+            ]
+        }
+    }
+}

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name used for your storage account"
+      }
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "type": "string",
+      "metadata": {
+        "description": "(required) MS region into which to deploy this resource."
+      }
+    },
+    "tagValues": {
+      "metadata": {
+        "description": "(optional) Tag object to apply tags to the resource."
+      },
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-09-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+
+      "properties": {
+        "publicNetworkAccess": "Disabled",
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": true,
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "isHnsEnabled": true,
+        "encryption": {
+          "requireInfrastructureEncryption": true,
+          "services": {
+            "blob": {
+              "keyType": "Account",
+              "enabled": true,
+
+              "file": {
+                "keyType": "Account",
+                "enabled": false
+              }
+            }
+          },
+          "keySource": "Microsoft.Storage",
+
+          "routingPreference": {
+            "routingChoice": "MicrosoftRouting"
+          }
+
+        },
+        "largeFileSharesState": "Disabled",
+        "bypass": "AzureServices",
+        "virtualNetworkRules": [],
+        "ipRules": [],
+        "defaultAction": "Deny"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2021-09-01",
+      "name": "[concat(parameters('storageAccountName'), '/default')]",
+      "tags": "[parameters('tagValues')]",
+
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+      ],
+
+      "properties": {
+        "containerDeleteRetentionPolicy": {
+          "enabled": false,
+          "days": 7
+        },
+        "cors": {
+          "corsRules": []
+        },
+        "deleteRetentionPolicy": {
+          "allowPermanentDelete": false,
+          "enabled": true,
+          "days": 7
+        }
+      }
+    }
+  ]
+}

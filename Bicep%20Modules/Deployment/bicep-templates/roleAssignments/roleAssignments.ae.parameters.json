@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "roleAssignmentObject": {
+            "value":{
+                "roleAssignment":[
+                {
+                    "name" : "LogAnalyticsContributor",
+                    "resourceGroup": "security",
+                    "roleId": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+                    "principalId": "154823d4-eb94-4ac0-abff-2a388d664eb3",
+                    "principalType": "group"
+                },
+                {
+                    "name" : "NetworkContributor",
+                    "resourceGroup": "network",
+                    "roleId": "4d97b98b-1d4f-4787-a291-c67834d212e7",
+                    "principalId": "154823d4-eb94-4ac0-abff-2a388d664eb3",
+                    "principalType": "group"
+                },
+                {
+                    "name" : "JITVirtualMachineAccess",
+                    "resourceGroup": "compute",
+                    "roleId": "8a708747-ad1d-56c7-8be9-1f5784a5c2ca",
+                    "principalId": "19cf9fd7-742e-45c4-9ec2-1bb2ccab0c8f",
+                    "principalType": "group"
+                }
+                ]
+            }
+
+        }
+    }
+}
+
+  

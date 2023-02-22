@@ -1,0 +1,65 @@
+{
+    "title": "First Chaos Experiment",
+    "description": "Doesn't do anything useful",
+    "tags": ["azure", "node"],
+    "contributions": {  
+      "reliability": "high",
+      "security": "none",
+      "scalability": "medium"
+    },
+    "configuration": {
+        "azure_subscription_id": {
+            "type": "env",
+            "key": "AZURE_SUBSCRIPTION_ID"
+        }
+    },
+    "secrets": {
+        "azure": {
+            "client_id": {
+                "type": "env",
+                "key": "AZURE_CLIENT_ID"
+            },
+            "client_secret": {
+                "type": "env",
+                "key": "AZURE_CLIENT_SECRET"
+            },
+            "tenant_id": {
+                "type": "env",
+                "key": "AZURE_TENANT_ID"
+            },
+            "azure_cloud": "AZURE_PUBLIC_CLOUD"
+          }
+    },
+    "steady-state-hypothesis": {
+      "title": "Services are all available and healthy",
+      "probes": [
+        {
+          "type": "probe",
+          "name": "consumer-service-must-still-respond",
+          "tolerance": 200,
+          "provider": {
+            "type": "http",
+            "url": "https://chaostoolkit.org/"
+          }
+        }
+      ]
+    },
+    "method": [
+      {
+        "type": "action",
+        "name": "Restart Machines at random",
+        "provider": {
+          "type": "python",
+          "module": "chaosazure.machine.actions",
+          "func": "restart_machines",
+          "secrets": ["azure"],
+          "config": ["azure_subscription_id"],
+          "arguments": {
+              "filter": "where resourceGroup=='rg-prod-ae-compute' and name contains 'dc'"
+          }
+        }
+      }
+    ],
+    "rollbacks": []
+}
+

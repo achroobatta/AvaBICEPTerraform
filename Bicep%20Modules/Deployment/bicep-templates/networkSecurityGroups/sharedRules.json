@@ -1,0 +1,60 @@
+{
+    "securityRules": [
+      {
+        "name": "Allow-RDP-from-VDC",
+        "properties": {
+          "description": "Allow inbound RDP from the company's IP address range.",
+          "protocol": "Tcp",
+          "sourceAddressPrefix": "10.0.0.0/8",
+          "sourcePortRange": "*",
+          "destinationAddressPrefix": "VirtualNetwork",
+          "destinationPortRange": "3389",
+          "access": "Allow",
+          "priority": 200,
+          "direction": "Inbound"
+        }
+      },
+      {
+        "name": "Allow-SSH-from-VDC",
+        "properties": {
+          "description": "Allow inbound SSH from the company's IP address range.",
+          "protocol": "Tcp",
+          "sourceAddressPrefix": "10.0.0.0/8",
+          "sourcePortRange": "*",
+          "destinationAddressPrefix": "VirtualNetwork",
+          "destinationPortRange": "22",
+          "access": "Allow",
+          "priority": 201,
+          "direction": "Inbound"
+        }
+      },
+      {
+        "name": "Allow-WinRM-from-VDC",
+        "properties": {
+          "description": "Allow inbound WinRM from the company's IP address range.",
+          "protocol": "Tcp",
+          "sourceAddressPrefix": "10.0.0.0/8",
+          "sourcePortRange": "*",
+          "destinationAddressPrefix": "VirtualNetwork",
+          "destinationPortRange": "5985-5986",
+          "access": "Allow",
+          "priority": 202,
+          "direction": "Inbound"
+        }
+      },
+      {
+        "name": "Deny-All",
+        "properties": {
+          "description": "Deny All",
+          "protocol": "*",
+          "sourceAddressPrefix": "*",
+          "sourcePortRange": "*",
+          "destinationAddressPrefix": "VirtualNetwork",
+          "destinationPortRange": "*",
+          "access": "Deny",
+          "priority": 4096,
+          "direction": "Inbound"
+        }
+      }
+    ]
+  }

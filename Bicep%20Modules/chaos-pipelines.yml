@@ -1,0 +1,51 @@
+trigger:
+  branches:
+    include: 
+    - master
+  paths:
+    include: 
+    - Deployment/chaos-experiments
+    - chaos-pipelines.yml
+
+# pool:
+  # vmImage: ubuntu-latest
+pool: LinuxPool # on premises running required to run network tests
+variables:
+  - name: environmentType
+    value: prod
+  - group: inspec-${{variables.environmentType}}
+
+stages:
+- stage: test
+  jobs:
+  - job: Chaos_experiments
+    steps:
+    #Install tasks
+    - task: Bash@3
+      displayName: "Install Chaos Toolkit"
+      inputs:
+        targetType: 'inline'
+        script: |
+            if ! [ -x "$(command -v chaos)" ]; 
+            then
+                echo "⚠️ Installing Chaos Toolkit..."
+                pip install -U chaostoolkit
+                echo "⚠️ Installing Azure Drivers..."
+                pip install -U chaostoolkit-azure --ignore-installed PyYAML
+                chaos discover --discovery-path ./Deployment/chaos-experiments/discovery.json chaostoolkit-azure
+                chaos --version
+              else
+                echo "✅ Chaos is already installed."
+                chaos --version
+              fi
+    # Run Tests for Azure
+    - task: Bash@3
+      displayName: 'Run chaos tests'
+      inputs:
+        targetType: inline
+        script: |
+          export AZURE_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
+          export AZURE_CLIENT_ID=$(AZURE_CLIENT_ID)
+          export AZURE_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+          export AZURE_TENANT_ID=$(AZURE_TENANT_ID)
+          chaos run ./Deployment/chaos-experiments/experiment.json

@@ -1,0 +1,42 @@
+# Pipeline to test 'expressRoute' separately 
+parameters:
+- name: deployEnvironments
+  displayName: Environments
+  type: string
+  default: "Development"
+  values:
+  - "Development"
+  - "Test"
+  - "Sandbox"
+  - "System Integration Testing"
+  - "User Acceptance Testing"
+  - "Pre-Production"
+  - "Production"
+  - "Data Development"
+- name: serviceConnection
+  type: string
+  default: "DevOpsConnection"
+  values:
+  - "DevOpsConnection"
+
+trigger:
+  none
+
+pool:
+  agentpool
+
+jobs:
+
+#Deploy Development Environment
+- template: Deployment/yaml-templates/jobs/deploy-expressRoute.yml
+  parameters:
+    job: Deploy_Dev_ExpressRoute_AustraliaEast
+    environmentType: dev
+    serviceConnection: ${{parameters.serviceConnection}}
+    hubserviceConnection: ${{parameters.serviceConnection}}
+    vgs: ../vgs/global.yml
+    resourceType: expressRoute
+    scope: group
+    jobDependsOn: '' ###
+    location: AustraliaEast
+    #spokeIndex

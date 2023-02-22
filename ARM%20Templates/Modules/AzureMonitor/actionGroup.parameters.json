@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "actionGroupName": {
+        "value": "actionGroup"
+      },
+      "actionGroupShortName": {
+        "value": "agShortName"
+      },
+      "emailReceivers": {
+        "value": [{
+          "name": "contosoEmail",
+          "emailAddress": "devops@contoso.com"
+        }]
+      },
+      "smsReceivers": {
+        "value": [{
+          "name": "smsReceiver",
+          "countryCode": "1",
+          "phoneNumber": "2134567891"
+        }]
+      },
+      "webhookReceivers": {
+        "value": []
+      },
+      "itsmReceivers": {
+        "value": []
+      },
+      "azureAppPushReceivers": {
+        "value": []
+      },
+      "automationRunbookReceivers": {
+        "value": []
+      },
+      "voiceReceivers": {
+        "value": []
+      },
+      "logicAppReceivers": {
+        "value": []
+      },
+      "azureFunctionReceivers": {
+        "value": []
+      },
+      "armRoleReceivers": {
+        "value": []
+      }
+    }
+  }

@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "suadmin" 
+        },
+        "adminPassword": {
+            "value": "apple123!" 
+        },
+        "vmNamePrefix": {
+            "value": "BackendVM"
+        },
+        "location": {
+            "value": "australiaeast" 
+        },
+        "vmSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "vnetName": {
+            "value": "suVNet"
+        },
+        "subnetName": {
+            "value": "susubnet"
+        },
+        "privateIPAddress": {
+            "value": "10.2.0.5"
+        },
+        "privateIPAllocationMethod": {
+            "value": "Static"
+        }, 
+        "frontendIPConfigurationsName": {
+            "value": "LoadBalancerFrontend" 
+        },
+        "backendAddressPools": {
+            "value": "BackendPool1" 
+        },
+        "loadbalancerProbeName": {
+            "value": "lbprobe" 
+        },
+        "loadbalancerRuleName": {
+            "value": "lbrule" 
+        },
+        "protocol": {
+            "value": "Tcp" 
+        },
+        "portNumber": {
+            "value": 80
+        },
+        "numberOfProbes": {
+            "value": 2
+        }
+    }
+}

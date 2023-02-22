@@ -1,0 +1,74 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: resourceType
+    type: string
+  - name: job
+    type: string
+  - name: scope
+    type: string
+  - name: location
+    type: string
+  - name: spokeIndex
+    type: string
+    default: ''
+
+  jobs:
+    - job: ${{parameters.job}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+            spokeIndex: ${{parameters.spokeIndex}} # Spoke numeric identifier
+      steps:         
+        - task: AzureCLI@2 # Deploy scheduled query rules
+          displayName: Build Scheduled Query Rules ${{parameters.location}}
+          inputs:
+            azureSubscription: ${{parameters.serviceConnection}}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: > # location has to be global
+              az deployment ${{parameters.scope}} create 
+              --resource-group ${{variables.workspaceGroup}}
+              --name ${{parameters.resourceType}}$(deployDate)
+              --template-file Deployment/bicep-templates/scheduledQueryRules/scheduledQueryRules.bicep 
+              --parameters Deployment/bicep-templates/scheduledQueryRules/scheduledQueryRules.${{variables.locationCode}}.parameters.json
+              --parameters "location="${{parameters.location}}
+              --parameters "environmentType="${{parameters.environmentType}}
+              --parameters "deployDate="$(deployDate)
+              --parameters "workspaceName="${{variables.workspaceName}}
+              --parameters "workspaceGroup="${{variables.workspaceGroup}}
+             
+        - task: AzureCLI@2 # Deploy activity query rules
+          displayName: Build Activity Rules ${{parameters.location}}
+          inputs:
+            azureSubscription: ${{parameters.serviceConnection}}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: > # location has to be global
+              az deployment ${{parameters.scope}} create 
+              --resource-group ${{variables.workspaceGroup}}
+              --name ${{parameters.resourceType}}$(deployDate)
+              --template-file Deployment/bicep-templates/activityLogAlerts/activityLogAlerts.bicep 
+              --parameters Deployment/bicep-templates/activityLogAlerts/activityLogAlerts.${{variables.locationCode}}.parameters.json
+              --parameters "environmentType="${{parameters.environmentType}}
+              --parameters "deployDate="$(deployDate)
+        # - task: AzureCLI@2 # Deploy scheduled query rules
+        #   displayName: Build Metric Rules ${{parameters.location}}
+        #   inputs:
+        #     azureSubscription: ${{parameters.serviceConnection}}
+        #     scriptType: 'bash'
+        #     scriptLocation: 'inlineScript'
+        #     inlineScript: > # location has to be global
+        #       az deployment ${{parameters.scope}} create 
+        #       --resource-group ${{variables.securityGroup}}
+        #       --name ${{parameters.resourceType}}$(deployDate)
+        #       --template-file Deployment/bicep-templates/metricAlerts/metricAlerts.bicep 
+        #       --parameters Deployment/bicep-templates/metricAlerts/metricAlerts.${{variables.locationCode}}.parameters.json
+        #       --parameters "environmentType="${{parameters.environmentType}}
+        #       --parameters "deployDate="$(deployDate)

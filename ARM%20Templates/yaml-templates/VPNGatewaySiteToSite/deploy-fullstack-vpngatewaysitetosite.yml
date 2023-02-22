@@ -1,0 +1,38 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string    
+  - name: pubIPName
+    type: string
+
+steps:
+- template: ../VirtualNetworkForVPNGateway/deploy-virtualnetworkforvpngateway.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-resourceGroupName "${{parameters.resourceGroupName}}"'
+
+- template: ../VirtualNetwork/components/deploy-publicIPAddress.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-pubIPName "${{parameters.pubIPName}}"'
+
+- template: deploy-vpngateway-sitetosite.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-gatewayPublicIPName "${{parameters.pubIPName}}" -location "${{parameters.location}}" -virtualNetworkName "${{parameters.vnetName}}"'

@@ -1,0 +1,38 @@
+parameters: 
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: pathToTemplate
+    type: string
+    default: 'Modules/PrivateEndpoints'
+  - name: templateName
+    type: string
+    default: 'privateEndpoints.json'
+  - name: parameterFileName
+    type: string
+    default: 'privateEndpoints.parameters.json'
+  - name: overrideParameters
+    type: string
+    default: ''
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM template deploy a Private Endpoint'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    templateLocation: Linked artifact
+    csmFile: '${{parameters.pathToTemplate}}/${{parameters.templateName}}'
+    deploymentMode: 'Incremental'
+    overrideParameters: '${{parameters.overrideParameters}}'
+    ${{ if ne(length(parameters.parameterFileName), 0) }}:
+      csmParametersFile: '${{parameters.pathToTemplate}}/${{parameters.parameterFileName}}'

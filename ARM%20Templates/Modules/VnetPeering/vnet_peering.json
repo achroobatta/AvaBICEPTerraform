@@ -1,0 +1,147 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "hubVnetName": {
+        "type": "string",
+        "defaultValue": ""
+      },
+      "hubVnetRg": {
+        "type": "string",
+        "defaultValue": ""
+      },
+      "spokeVnetName": {
+        "type": "string",
+        "defaultValue": ""
+      },
+      "spokeVnetRg": {
+        "type": "string",
+        "defaultValue": ""
+      }
+    },
+    "functions": [],
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": "[format(parameters('hubVnetName'), parameters('spokeVnetName'))]",
+        "resourceGroup": "[parameters('hubVnetRg')]",
+        "properties": {
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+          },
+          "mode": "Incremental",
+          "parameters": {
+            "hubVnetName": {
+              "value": "[parameters('hubVnetName')]"
+            },
+            "spokeVnetName": {
+              "value": "[parameters('spokeVnetName')]"
+            },
+            "spokeVnetRg": {
+              "value": "[parameters('spokeVnetRg')]"
+            },
+            "remoteVnetID": {
+              "value": "[resourceId(parameters('spokeVnetRg'), 'Microsoft.Network/virtualNetworks', parameters('spokeVnetName'))]"
+            }
+          },
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "hubVnetName": {
+                "type": "string"
+              },
+              "spokeVnetName": {
+                "type": "string"
+              },
+              "spokeVnetRg": {
+                "type": "string"
+              },
+              "remoteVnetID": {
+                "type": "string"
+              }
+            },
+            "functions": [],
+            "resources": [
+              {
+                "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                "apiVersion": "2020-06-01",
+                "name": "[format('{0}/peering-to-{1}', parameters('hubVnetName'), parameters('spokeVnetName'))]",
+                "properties": {
+                  "allowVirtualNetworkAccess": true,
+                  "allowForwardedTraffic": true,
+                  "allowGatewayTransit": false,
+                  "useRemoteGateways": false,
+                  "remoteVirtualNetwork": {
+                    "id": "[parameters('remoteVnetID')]"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": "[format(parameters('spokeVnetName'), parameters('hubVnetName'))]",
+        "resourceGroup": "[parameters('spokeVnetRg')]",
+        "properties": {
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+          },
+          "mode": "Incremental",
+          "parameters": {
+            "hubVnetName": {
+              "value": "[parameters('spokeVnetName')]"
+            },
+            "spokeVnetName": {
+              "value": "[parameters('hubVnetName')]"
+            },
+            "spokeVnetRg": {
+              "value": "[parameters('hubVnetRg')]"
+            },
+            "remoteVnetID": {
+              "value": "[resourceId(parameters('hubVnetRg'), 'Microsoft.Network/virtualNetworks', parameters('hubVnetName'))]"
+            }
+          },
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "hubVnetName": {
+                "type": "string"
+              },
+              "spokeVnetName": {
+                "type": "string"
+              },
+              "spokeVnetRg": {
+                "type": "string"
+              },
+              "remoteVnetID": {
+                "type": "string"
+              }
+            },
+            "functions": [],
+            "resources": [
+              {
+                "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                "apiVersion": "2020-06-01",
+                "name": "[format('{0}/peering-to-{1}', parameters('hubVnetName'), parameters('spokeVnetName'))]",
+                "properties": {
+                  "allowVirtualNetworkAccess": true,
+                  "allowForwardedTraffic": true,
+                  "allowGatewayTransit": false,
+                  "useRemoteGateways": false,
+                  "remoteVirtualNetwork": {
+                    "id": "[parameters('remoteVnetID')]"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }

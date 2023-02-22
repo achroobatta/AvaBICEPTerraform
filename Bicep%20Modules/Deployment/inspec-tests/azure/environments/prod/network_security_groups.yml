@@ -1,0 +1,21 @@
+# Australia East
+- name: nsg-prod-ae-dc-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-exc-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-pki-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-sailpoint-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-sccm-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-ansible-01
+  resource_group: rg-prod-ae-network
+- name: nsg-prod-ae-accelerate-01
+  resource_group: rg-prod-ae-network  
+  
+# Australia South East
+- name: nsg-prod-ase-dc-01
+  resource_group: rg-prod-ase-network
+- name: nsg-prod-ase-pki-01
+  resource_group: rg-prod-ase-network  

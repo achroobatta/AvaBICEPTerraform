@@ -1,0 +1,30 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: aspNameLinux
+    type: string
+  - name: webappNameLinux
+    type: string
+
+steps:
+- template: components/deploy-asp-linux.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-aspName "${{parameters.aspNameLinux}}" -location "${{parameters.location}}"'
+
+- template: components/deploy-appservice-linux.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-aspPortalName "${{parameters.aspNameLinux}}" -webAppName "${{parameters.webappNameLinux}}" -location "${{parameters.location}}"'

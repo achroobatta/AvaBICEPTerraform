@@ -1,0 +1,503 @@
+trigger:
+- none
+
+# pool:
+#   vmImage: ubuntu-latest
+pool: agentpool
+
+variables:
+  - group: vb-dev-vargrp
+
+stages:
+  - stage: DeployRG
+    displayName : Deploy RG
+    jobs:
+      - job:
+        steps:
+          - template: ResourceGroup/deploy-rg.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              location: $(resourceLocation)
+              overrideParameters: '-resourceGroupName $(resourceGroupName)'
+
+  - stage: DeployKV
+    displayName : Deploy Key Vault
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: KeyVault/deploy-key-vault-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              keyVaultName: $(keyVaultName)
+              tenantId: $(tenantId)
+              objectId: $(objectId)
+
+  - stage: DeploySA
+    displayName : Deploy Storage Account
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: StorageAccount/deploy-storage-account.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-storageAccountName $(storageAccountName)'
+
+  - stage: Deployvnet
+    displayName : Deploy Vnet Subnet
+    dependsOn: [ DeployRG ]
+    jobs:
+      - job:
+        steps:
+          - template: VirtualNetwork/deploy-vnet-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(vnetName)
+              subnetName: $(subnetName)
+              vnetPrefixes: $(vnetPrefix)
+              subnetPrefix: $(subnetPrefix)
+              nicName: $(nicName)
+
+  - stage: Deploynsg
+    displayName : Deploy NSG and Rules
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: NetworkSecurityGroups/deploy-nsg-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              nsgName: $(nsgName)
+
+  - stage: Deployappservicelinux
+    displayName : Deploy app service linux
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: AppService/deploy-appService-linux-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              aspNameLinux: $(aspNameLinux)
+              webappNameLinux: $(webappNameLinux)
+
+  - stage: Deployappservicewindows
+    displayName : Deploy app service windows
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: AppService/deploy-appService-windows-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              aspNameWindows: $(aspNameWindows)
+              webappNameWindows: $(webappNameWindows)
+
+  - stage: DeployLA
+    displayName : Deploy Log Analytics Workspace
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: LogAnalytics/deploy-workspaces.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-workspaceName $(logAnalyticsWSName) -sku PerGB2018'
+
+  - stage: DeploySentinel
+    displayName : Deploy Sentinel
+    dependsOn: [DeployLA]
+    jobs:
+      - job:
+        steps:
+          - template: Sentinel/deploy-sentinel.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-workspaceName $(logAnalyticsWSName)'
+
+  - stage: DeployER
+    displayName : Deploy Express ROute with Pvt peering
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: ExpressRoute/deploy-erwithpeering-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              circuitName: $(erCktName)
+
+  - stage: DeployAppInsights
+    displayName : Deploy App Insights with availability Test
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: AppInsights/deploy-appInsights-availabilityTest.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              appInsightsName: $(appInsightName)
+              appName: $(appInsightName)
+
+  - stage: DeployAGandAlerts
+    displayName : Deploy Action Group and metric Alerts with availability Test
+    dependsOn: [DeploySA]
+    jobs:
+      - job: DeployActionGroup
+        displayName: Deploy Action groups
+        steps:
+          - template: AzureMonitor/deploy-ag.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-actionGroupName $(actionGroupName) -actionGroupShortName $(actionGroupShortName)'
+
+      - job: DeployStaticMetricAlerts
+        displayName: Deploy static metric alerts for storage account
+        dependsOn: DeployActionGroup
+        steps:
+          - template: AzureMonitor/deploy-ma-multipleStatic.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-alertName vbalertSt1 -resourceId $(metricTestResource)$(storageAccountName) -actionGroupName $(actionGroupName)'
+      - job: DeployDynamicMetricAlerts
+        displayName: Deploy static metric alerts for storage account
+        dependsOn: DeployActionGroup
+        steps:
+          - template: AzureMonitor/deploy-ma-multipleDynamic.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-alertName vbalertDy1 -resourceId $(metricTestResource)$(storageAccountName) -actionGroupName $(actionGroupName)'
+
+  - stage: DeployPolicy
+    displayName : Deploy Azure Policy
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: AzurePolicy/deploy-azurepolicy.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+
+  - stage: DeployAG
+    displayName : Deploy AG with vnet
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: ApplicationGateway/deploy-fullstack-appGateway.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(vnetName)
+              subnetName: $(agsubnetName)
+              vnetPrefixes: $(vnetPrefix)
+              subnetPrefix: $(agsubnetPrefix)
+              pubIPName: $(pubIPName)
+              appGatewayName: $(appGatewayName)
+              agbackendIPAddresses: '[{"IpAddress":"10.2.1.10"},{"IpAddress":"10.2.1.11"}]'
+
+  - stage: DeployADDS
+    displayName : Deploy ADDS with vnet
+    dependsOn: []
+    jobs:
+      - job:
+        steps:
+          - template: ADDS/deploy-fullstack-adds.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(addsvnetName)
+              subnetName: $(addssubnetName)
+              vnetPrefixes: $(addsvnetPrefix)
+              subnetPrefix: $(addssubnetPrefix)
+              nsgName: $(addsnsgName)
+              domainName: $(addsdomainName)
+
+  - stage: DeployAzureSQLdatabase
+    displayName: 'Deploy Azure SQL database'
+    dependsOn: []
+    jobs:
+      - job: DeployAzureSQLdatabase
+        displayName: 'Deploy Azure SQL database'
+        steps:
+          - template: AzureSQL/deploy-azuresql.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-serverName "$(serverName)" -sqlDBName "$(sqlDBName)" -sqlDbCount "$(sqlDbCount)" -location "$(location)" -sqladministratorLogin "$(sqladministratorLogin)" -sqladministratorLoginPassword "$(sqladministratorLoginPassword)" -sqlDbNameSKUName "$(sqlDbNameSKUName)" -sqlDBNameSKUtier "$(sqlDBNameSKUtier)"'
+
+  - stage: DeployRouteTable
+    displayName: 'Deploy the Routetable'
+    dependsOn: []
+    jobs:
+      - job: DeployRouteTable
+        displayName: 'Deploy the Routetable'
+        steps:
+          - template: RouteTable/deploy-routetable.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+ 
+  - stage: vNETPeering
+    displayName: 'ARM Template Deploy a Vnet peering hub and spoke'
+    dependsOn: []
+    jobs:
+      - job: vNETPeering
+        displayName: 'ARM Template Deploy a Vnet peering hub and spoke'
+        steps:
+          - template: VnetPeering/deploy-vnet-peering.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-hubVnetName "$(hubVnetName)" -hubVnetRg "$(hubVnetRg)" -spokeVnetName "$(spokeVnetName)" -spokeVnetRg  "$(spokeVnetRg)" -resourceGroupName "$(resourceGroupName)"'
+ 
+  - stage: DeployLoadBalancerInternal
+    displayName: 'Deploy a Load Balancer Internal'
+    dependsOn: [Deployvnet, Deploynsg]
+    jobs:
+      - job: DeployLoadBalancerInternal
+        displayName: 'Deploy a Load Balancer Internal'
+        steps:
+          - template: LoadBalancer/deploy-loadbalancerinternal.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: 
+                '-vnetName $(vnetName) 
+                -subnetName $(subnetName)'         
+ 
+  - stage: DeployLinuxVirtualMachine
+    displayName: Deploy Linux Virtual Machine
+    dependsOn: []
+    jobs:
+      - job: DeployLinuxVirtualMachine
+        displayName: 'Deploy Linux Virtual Machine'
+        steps:
+          - template: VirtualMachineLinux/deploy-fullstack-vmlinux.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(vnetName)
+              vnetPrefixes: $(vnetPrefix)
+              subnetName: $(subnetName)
+              subnetPrefix: $(subnetPrefix)
+              nicName: $(nicName)
+              nsgName: $(nsgName)
+              projectName: $(projectName)
+              linuxVMadminUsername: $(linuxVMadminUsername)
+              linuxVMadminPublicKey: $(linuxVMadminPublicKey)
+              vmSize: $(vmSize)
+              deploymentEnvironment: $(deploymentEnvironment)
+
+  - stage: DeployAzureFirewall
+    displayName: 'Deploy an Azure Firewall'
+    dependsOn: [ Deployvnet ]
+    jobs:
+      - job: AzureFirewall
+        displayName: 'Deploy an Azure Firewall'
+        steps:
+          - template: AzureFirewall/deploy-fullstack-azure-firewall-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              virtualNetworkName: $(virtualNetworkName)
+              fwSubnetPrefix: $(fw-subnetPrefix)
+
+  - stage: DeployVPNGatewaySiteToSite
+    displayName: 'Deploy a VPN Gateway Site to Site Connection'
+    jobs:
+      - job: DeployVPNGatewaySiteToSite
+        displayName: Deploy a VPN Gateway Site to Site Connection
+        dependsOn: []
+        steps:
+          - template: VPNGatewaySiteToSite/deploy-fullstack-vpngatewaysitetosite.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: "vpngw-vnet"
+              pubIPName: "vpngwpubIPname"
+
+  - stage: DeployVirtualMachineWindows
+    displayName: Deploy Windows Virtual Machine
+    dependsOn: []
+    jobs:
+      - job: DeployVirtualMachineWindows
+        displayName: Deploy Windows Virtual Machine
+        steps:
+          - template: VirtualMachineWindows/deploy-fullstack-virtualmachine-windows.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(vm-vnetName)
+              subnetName: $(vm-subnetName)
+              vnetPrefixes: $(vnetPrefix)
+              subnetPrefix: $(subnetPrefix)
+              overrideParameters: '-adminUsername $(vm-adminUsername) -adminPassword $(vm-adminPassword) -OSVersion $(vm-OSVersion) -vmSize $(vm-size) -location $(resourceLocation) -numberOfDataDisks $(vm-numDataDisks) -sizeOfDataDisksInGB $(vm-dataDiskSize) -osDiskStorageAccountType $(vm-osDiskStorageAccountType) -vmName $(vm-name) -computerHostName $(vm-computerHostName) -nicName $(vm-nicName)'
+
+  - stage: DeployDataFactory
+    displayName: Deploy Data Factory
+    dependsOn: []
+    jobs:
+      - job:
+        displayName: Deploy Data Factory
+        steps:
+          - template: DataFactory/deploy-datafactory.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              overrideParameters: '-dataFactoryName $(dataFactoryName)'
+
+  - stage: DeployPrivateEndpoint
+    displayName: Deploy Private Endpoint
+    dependsOn: []
+    jobs:
+      - job: DeployPrivateEndpoint
+        displayName: Deploy Private Endpoint
+        steps:
+          - template: PrivateEndpoints/deploy-fullstack-private-endpoints.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(pep-vnetName)
+              subnetName: $(pep-subnetName)
+              vnetPrefixes: $(vnetPrefix)
+              subnetPrefix: $(subnetPrefix)
+              resourceSelection: "$(pep-resourceSelection)"
+              resourceName: $(pep-resourceName)
+              endpointName: $(pep-name)
+              storageSubresource: $(pep-storageSubresource)
+
+  - stage: DeployPrivateDNSZone
+    displayName: Deploy a Private DNS Zone
+    dependsOn: []
+    jobs:
+      - job: DeployPrivateDNSZone
+        displayName: Deploy a Private DNS Zone
+        steps:
+          - template: PrivateDNS/deploy-fullstack-private-dns.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              vnetName: $(privdns-vnetName)
+              vnetPrefixes: $(vnetPrefix)
+              privateDnsZoneName: $(privdnsname)
+              vmRegistration: $(vmRegistration)
+
+
+  - stage: DeployBastionHost
+    displayName: Deploy Bastion Host
+    dependsOn: []
+    jobs:
+      - job: DeployBastionHost
+        displayName: Deploy Bastion Host
+        steps:
+          - template: BastionHost/deploy-bastion-host-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              location: $(resourceLocation)
+              publicIpAddressName: $(bastion-publicIpAddressName)
+              vnetName: $(bastion-vnetName)
+              addressPrefix: $(bastion-addressPrefix)
+              bastionSubnetIpPrefix: $(bastion-subnetIpPrefix)
+              nsgName: $(bastion-nsgName)
+              bastionHostName: $(bastion-hostName)
+
+  - stage: DeployAzureSQLMI
+    displayName: Deploy Azure SQL MI
+    dependsOn: []
+    jobs:
+      - job: DeployAzureSQLMI
+        displayName: Deploy Azure SQL MI
+        steps:
+          - template: AzureSQLMI/deploy-azuresqlmi-default.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              subscriptionId: $(subscriptionId)
+              resourceGroupName: $(resourceGroupName)
+              nsgName: $(mi-nsgName)
+              routeTableName: $(mi-routeTableName)
+              location: $(resourceLocation)
+              vnetName: $(mi-vnetName)
+              addressPrefix: $(mi-addressPrefix)
+              subnetName: $(mi-subnetName)
+              subnetPrefix: $(mi-subnetPrefix)
+              overrideParameters: '-managedInstanceName $(mi-name) -administratorLogin $(mi-adminUser) -administratorLoginPassword $(mi-adminPassword)
+                -location $(resourceLocation)
+                -vnetName $(mi-vnetName)
+                -subnetName $(mi-SubnetName)
+                -skuName $(mi-skuName)
+                -vCores $(mi-vCores)
+                -storageSizeInGB $(mi-storageSizeInGB)
+                -licenseType $(mi-licenseType)
+                -identityType $(mi-identityType)'

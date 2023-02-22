@@ -1,0 +1,138 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to add a subnet to an Azure virtual network resource."
+  },
+  "parameters": {
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name of the subnet."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "(required) The name of the VNet associated with this subnet."
+      }
+    },
+    "addressPrefix": {
+      "defaultValue": "10.0.0.0/24",
+      "type": "string",
+      "metadata": {
+        "description": "(optinal) The address prefix for the subnet. Default is 10.0.0.0/24"
+      }
+    },
+    "addressPrefixes": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optinal) List of address prefixes for the subnet."
+      }
+    },
+    "nsgName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The reference Id to the NetworkSecurityGroup resource."
+      }
+    },
+    "routeTableName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) Id for the route table resource to associate with this subnet."
+      }
+    },
+    "natGatewayName": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "(optional) The id for Nat gateway associated with this subnet"
+      }
+    },
+    "serviceEndpoints": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) An array of service endpoints. Each service endpoint entry is an object containing 2 elements: Service, locations. The service element contains the microsoft azure resource type name. Locations is a list of regions to be enabled."
+      }
+    },
+    "serviceEndpointPolicies": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) An array of service endpoint policy ids."
+      }
+    },
+    "delegations": {
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description": "(optional) An array of references to the delegations (delegation objects) on the subnet. The delegation object contains 2 elements: name and properties. the name is a unique identity string within the subnet. The properties object contains a serviceName element. The value of the serviceName element is a microsoft resource type to which the delegation is made."
+      }
+    },
+    "privateEndpointNetworkPolicies": {
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optinal) Enable or Disable apply network policies on private end point in the subnet. Options: 'Enabled' or 'Disabled'"
+      }
+    },
+    "privateLinkServiceNetworkPolicies": {
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "(optinal) Enable or Disable apply network policies on private link service in the subnet. Options: 'Enabled' or 'Disabled'"
+      }
+    }
+  },
+  "variables": {     
+    "networkSecurityGroupId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/networkSecurityGroups/',parameters('nsgName'))]",
+    "routeTableId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/routeTables/',parameters('routeTableName'))]",
+    "natGatewayId": "[concat('subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Network/natGateways/',parameters('natGatewayName'))]",
+    "vnetowrkSecurityGroup": {
+      "id": "[variables('networkSecurityGroupId')]"
+    },
+    "vrouteTable": {
+      "id": "[variables('routeTableId')]"
+    },
+    "vnatGateway": {
+      "id": "[variables('natGatewayId')]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "properties": {
+        "addressPrefix": "[if(not(empty(parameters('addressPrefixes'))),json('null'),parameters('addressPrefix'))]",
+        "addressPrefixes": "[if(empty(parameters('addressPrefixes')),json('null'),parameters('addressPrefixes'))]",
+        "networkSecurityGroup": "[if(empty(parameters('nsgName')),json('null'),variables('vnetowrkSecurityGroup'))]",
+        "routeTable": "[if(empty(parameters('routeTableName')),json('null'),variables('vrouteTable'))]",
+        "natGateway": "[if(empty(parameters('natGatewayName')),json('null'),variables('vnatGateway'))]",
+        "serviceEndpoints": "[parameters('serviceEndpoints')]",
+        "serviceEndpointPolicies": "[if(empty(parameters('serviceEndpointPolicies')),json('null'),parameters('serviceEndpointPolicies'))]",
+        "delegations": "[parameters('delegations')]",
+        "privateEndpointNetworkPolicies": "[parameters('privateEndpointNetworkPolicies')]",
+        "privateLinkServiceNetworkPolicies": "[parameters('privateLinkServiceNetworkPolicies')]"
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vnetName'),parameters('subnetName'))]"
+    }
+  }
+}

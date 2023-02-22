@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourceSelection": {
+        "value": "Storage Account"
+      },
+      "resourceName": {
+        "value": "storageaccount01"
+      },
+      "endpointName": {
+        "value": "privEndpointName01"
+      },
+      "location": {
+        "value": "australiaeast"
+      },
+      "subnetName": {
+        "value": "privateendpoint-subnet"
+      },
+      "vnetName": {
+        "value": "privateendpoint-vnet"
+      },
+      "storageSubresource": {
+        "value": "blob"
+      }
+    }
+  }

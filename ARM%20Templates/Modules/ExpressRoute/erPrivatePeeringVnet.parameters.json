@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "circuitName": {
+            "value": "er-ckt01"
+        },
+        "peerASN": {
+            "value": 65001
+        },
+        "primaryPeerAddressPrefix": {
+            "value": "192.168.10.16/30"
+        },
+        "secondaryPeerAddressPrefix": {
+            "value": "192.168.10.20/30"
+        },
+        "vlanId": {
+            "value": 100
+        }
+    }
+}

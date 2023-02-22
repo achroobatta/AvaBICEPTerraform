@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "value": "azuresql-server" 
+        },
+        "sqlDBName": {
+            "value": "su-sql-db"
+        },
+        "location": {
+            "value": "Australia East" 
+        },
+        "sqladministratorLogin": {
+            "value": "suadmin" 
+        },
+        "sqladministratorLoginPassword": {
+            "value": "apple123!" 
+        },
+        "sqlDbCount" : {
+            "value": 2
+        },
+        "sqlDbNameSKUName": {
+            "value": "Standard" 
+        },
+        "sqlDBNameSKUtier": {
+            "value": "Standard" 
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vmObject": {
+            "value": { 
+                "vm":[
+                    {
+                    "name": "paws01",
+                    "osType": "Windows",
+                    "vmSize": "Standard_B2ms",
+                    "imageReference":{
+                        "offer": "windows-11",
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "sku": "win11-21h2-ent",
+                        "version": "latest"
+                    },
+                    "privateIPAddressVersion": "IPv4",
+                    "availabilitySet": "paws-workstation",
+                    "virtualNetwork": "spoke-02",
+                    "subnet": "paws-01",
+                    "applicationSecurityGroup": "paws-workstation",
+                    "storageAccountType": "Standard_LRS",
+                    "disks": []
+                    }               
+                ]
+            }
+        }
+    }
+}

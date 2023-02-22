@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "Template used to add a security rule to an Azure network security group resource."
+  },
+  "parameters": {
+    "nsgName": {
+      "type": "String",
+      "metadata": {
+        "description": "(required) The name of the network security group."
+      }
+    },
+    "nsgRules":{
+      "defaultValue": [],
+      "type": "array",
+      "metadata": {
+        "description":"(optional) Add many rules to nsg. The format for each item should be {{'name': '','protocol': 'Tcp','sourcePortRange': '*','sourceAddressPrefix: '','destinationAddressPrefix': '*','destinationPortRange': '','access': 'Allow','direction': 'Inbound','priority': '100'}"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+   {
+
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('nsgName'),'/', parameters('nsgRules')[copyIndex()].name)]",
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+       "properties": {
+          "protocol": "[parameters('nsgRules')[copyIndex()].protocol]",
+          "sourcePortRange": "[parameters('nsgRules')[copyIndex()].sourcePortRange]",
+          "destinationPortRange": "[parameters('nsgRules')[copyIndex()].destinationPortRange]",
+          "access": "[parameters('nsgRules')[copyIndex()].access]",
+          "sourceAddressPrefix": "[parameters('nsgRules')[copyIndex()].sourceAddressPrefix]",
+          "destinationAddressPrefix": "[parameters('nsgRules')[copyIndex()].destinationAddressPrefix]",
+          "direction": "[parameters('nsgRules')[copyIndex()].direction]",
+          "priority": "[parameters('nsgRules')[copyIndex()].priority]"
+        },
+      "copy": {
+        "name": "rulesCopy",
+        "count": "[length(parameters('nsgRules'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

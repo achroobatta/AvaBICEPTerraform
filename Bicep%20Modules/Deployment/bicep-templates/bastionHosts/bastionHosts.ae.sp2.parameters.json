@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "bastionHostObject": {
+            "value":{
+                "bastionHost":[
+                {
+                    "name": "spoke-02",
+                    "vnetName": "spoke-02",
+                    "privateIPAllocationMethod": "Dynamic",
+                    "scaleUnits": 2,
+                    "sku": "Standard",
+                    "pip": "bst-01"
+                }
+                ]
+            }
+
+        }
+    }
+}

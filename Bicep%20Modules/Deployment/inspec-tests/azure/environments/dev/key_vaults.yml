@@ -1,0 +1,5 @@
+- name: kv-dev-ae-sec-01
+  resource_group: rg-dev-ae-security
+- name: kv-dev-ase-sec-01
+  resource_group: rg-dev-ase-security
+

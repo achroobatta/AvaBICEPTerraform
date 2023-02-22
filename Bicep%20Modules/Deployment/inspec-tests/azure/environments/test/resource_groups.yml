@@ -1,0 +1,18 @@
+# resource groups for AustraliaEast
+- name: rg-test-ae-network
+  location: australiaeast
+- name: rg-test-ae-compute
+  location: australiaeast
+- name: rg-test-ae-security
+  location: australiaeast
+- name: rg-test-ae-storage
+  location: australiaeast
+# resource groups for AustraliaSouthEast
+- name: rg-test-ase-network
+  location: australiasoutheast
+- name: rg-test-ase-compute
+  location: australiasoutheast
+- name: rg-test-ase-security
+  location: australiasoutheast
+- name: rg-test-ase-storage
+  location: australiasoutheast

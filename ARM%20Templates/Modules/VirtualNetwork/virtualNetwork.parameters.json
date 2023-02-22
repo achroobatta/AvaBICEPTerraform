@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "value": "vb-vnet"
+        },
+        "location": {
+            "value": "australiaeast"
+        },
+        "addressPrefixes": {
+            "value": ["10.2.0.0/16"]
+        },
+        "dnsServers": {
+            "value": []
+        },
+        "enableDdosProtection": {
+            "value": false
+        },
+        "enableVmProtection": {
+            "value": false
+        },
+        "ddosProtectionPlanId": {
+            "value": ""
+        },
+        "tags_CreationDate": {
+            "value": ""
+        },
+        "tags_Environment": {
+            "value": "Dev"
+        },
+        "tags": {
+            "value": {}
+        }
+    }
+}

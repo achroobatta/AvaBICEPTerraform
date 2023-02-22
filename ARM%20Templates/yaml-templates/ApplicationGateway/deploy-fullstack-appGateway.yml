@@ -1,0 +1,56 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: pubIPName
+    type: string
+  - name: appGatewayName
+    type: string
+  - name: agbackendIPAddresses
+    type: string    
+
+steps:
+- template: ../VirtualNetwork/components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: ../VirtualNetwork/components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -addressPrefix "${{parameters.subnetPrefix}}"'
+
+- template: ../VirtualNetwork/components/deploy-publicIPAddress.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-pubIPName "${{parameters.pubIPName}}"'
+
+- template: deploy-appGateway.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-appGatewayName "${{parameters.appGatewayName}}" -vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -pubIPName "${{parameters.pubIPName}}" -backendIPAddresses "${{parameters.agbackendIPAddresses}}"'    

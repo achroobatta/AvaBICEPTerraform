@@ -1,0 +1,28 @@
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables: # Use this creation date for all resource deployments
+  deployDate: $[format('{0:dd}-{0:MM}-{0:yyyy}H{0:HH}_{0:mm}', pipeline.startTime)]
+
+stages:
+#   - template: stages/run-preflight-checks.yml
+#     parameters:
+#       serviceConnection: DevOpsConnection
+#       environmentType: dev
+#       stageName: runpreflightchecks
+
+  - template: stages/deploy-mssql.yml
+    parameters:
+      serviceConnection: DevOpsConnection
+      environmentType: dev
+      stageName: deploymssql
+      hubServiceConnection: DevOpsConnection
+
+  - template: stages/cleanup-resources.yml
+    parameters:
+      stageName: cleanupdevresources
+      environmentType: dev
+      serviceConnection: DevOpsConnection

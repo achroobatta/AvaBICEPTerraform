@@ -1,0 +1,34 @@
+parameters:
+- name: environmentType
+  type: string
+- name: serviceConnection
+  type: string
+- name: hubServiceConnection
+  type: string
+- name: stageName
+  type: string
+stages:
+  - stage: ${{parameters.stageName}}
+    # do not run prod unless in master branch
+    # only run if previous stage has completed successfully
+    condition: and(or(not(eq('${{ parameters.environmentType }}', 'prod')), eq(variables['Build.SourceBranch'], 'refs/heads/master')),succeeded())
+    jobs:
+      # RoleAssignments
+      - template: ../jobs/deploy-resourceGroupLocks.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: locks
+          job: ${{parameters.stageName}}_RG_Locks_AustraliaEast
+          location: AustraliaEast
+          scope: group 
+      - template: ../jobs/deploy-resourceGroupLocks.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: locks
+          job: ${{parameters.stageName}}_RG_Locks_AustraliaSouthEast
+          location: AustraliaSouthEast
+          scope: group 

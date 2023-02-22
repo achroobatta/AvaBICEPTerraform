@@ -1,0 +1,32 @@
+parameters:
+- name: environmentType
+  type: string
+- name: stageName
+  type: string
+- name: serviceConnection
+  type: string
+- name: keyVaultName
+  type: string
+- name: secretsFilter
+  type: string
+
+stages:
+  - stage: ${{parameters.stageName}}
+    condition: succeeded() 
+    jobs:
+    # For Hub build the serviceConnection & hubServiceConnection are the same. This is not true for spoke
+
+    # Resource Groups
+      - template: ../jobs/test-azureServices.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          job: ${{parameters.stageName}}_Test_Azure_Service
+
+      - template: ../jobs/test-infrastructure.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          job: ${{parameters.stageName}}_Test_Infrastructure
+          keyVaultName: ${{parameters.keyVaultName}}
+          secretsFilter: ${{parameters.secretsFilter}}

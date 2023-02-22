@@ -1,0 +1,112 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vnetObject": {
+            "value": { 
+                "vnet":[
+                    {
+                        "name": "hub-01",
+                        "addressPrefixes": [
+                            "10.10.0.0/16"
+                        ],
+                        "dnsServers": ["10.10.1.4", "10.10.1.5"],
+                        "subnets": [
+                                {
+                                  "name": "GatewaySubnet",
+                                  "addressPrefix": "10.10.0.0/26",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "builtin": true
+                                },
+                                {
+                                  "name": "AzureFirewallSubnet",
+                                  "addressPrefix": "10.10.0.64/26",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "builtin": true
+                                },
+                                {
+                                  "name": "AzureBastionSubnet",
+                                  "addressPrefix": "10.10.128.0/26",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "builtin": true
+                                },
+                                {
+                                  "name": "dc-01",
+                                  "addressPrefix": "10.10.1.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "dc-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "pki-01",
+                                  "addressPrefix": "10.10.2.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "pki-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "exc-01",
+                                  "addressPrefix": "10.10.3.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "exc-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "sccm-01",
+                                  "addressPrefix": "10.10.4.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "sccm-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "sailpoint-01",
+                                  "addressPrefix": "10.10.5.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "sailpoint-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "paw-01",
+                                  "addressPrefix": "10.10.6.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "paw-01",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "ansible-01",
+                                  "addressPrefix": "10.10.7.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "accelerate-01",
+                                  "addressPrefix": "10.10.8.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "builtin": false
+                                },
+                                {
+                                  "name": "AzureADDSSubnet",
+                                  "addressPrefix": "10.10.10.0/24",
+                                  "privateEndpointNetworkPolicies": "disabled",
+                                  "privateLinkServiceNetworkPolicies": "disabled",
+                                  "nsgName": "adds-01",
+                                  "builtin": true
+                                }                                
+                            ]
+                    }
+                ]
+            }
+        }
+    }
+}

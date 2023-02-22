@@ -1,0 +1,87 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: nicName
+    type: string
+  - name: nsgName
+    type: string
+  - name: projectName
+    type: string
+  - name: linuxVMadminUsername
+    type: string
+  - name: linuxVMadminPublicKey
+    type: string
+  - name: vmSize
+    type: string
+  - name: deploymentEnvironment
+    type: string
+
+steps:
+- template: ../VirtualNetwork/components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: ../VirtualNetwork/components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -addressPrefix "${{parameters.subnetPrefix}}"'
+
+- template: ../VirtualNetwork/components/deploy-networkInterface.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nicName "${{parameters.nicName}}" -vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}"'
+
+- template: ../NetworkSecurityGroups/components/deploy-nsg.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: ../NetworkSecurityGroups/components/deploy-nsgRules.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-nsgName "${{parameters.nsgName}}"'
+
+- template: deploy-virtualmachinelinux.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '
+      -projectName "${{parameters.projectName}}"
+      -location "${{parameters.location}}"
+      -linuxVMadminUsername "${{parameters.linuxVMadminUsername}}"
+      -linuxVMadminPublicKey "${{parameters.linuxVMadminPublicKey}}"
+      -vmSize "${{parameters.vmSize}}"
+      -deploymentEnvironment "${{parameters.deploymentEnvironment}}"
+      -nicName "${{parameters.nicName}}"'  

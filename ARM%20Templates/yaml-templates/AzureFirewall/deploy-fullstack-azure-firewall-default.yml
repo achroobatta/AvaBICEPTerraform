@@ -1,0 +1,33 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: virtualNetworkName
+    type: string
+  - name: fwSubnetPrefix
+    type: string
+
+steps:
+
+# deploy AzureFirewallSubnet
+- template: ../VirtualNetwork/components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.virtualNetworkName}}" -subnetName "AzureFirewallSubnet" -addressPrefix "${{parameters.fwSubnetPrefix}}"'
+
+- template: deploy-azureFirewall.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-virtualNetworkName "${{parameters.virtualNetworkName}}"'
+

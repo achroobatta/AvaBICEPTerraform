@@ -1,0 +1,41 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: resourceType
+    type: string
+  - name: job
+    type: string
+  - name: scope
+    type: string
+  - name: location
+    type: string  
+  - name: spokeIndex
+    type: string
+    default: ''
+    
+  jobs:
+    - job: ${{parameters.job}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+            spokeIndex: ${{parameters.spokeIndex}} # Spoke numeric identifier
+      steps:      
+      - task: AzureCLI@2 # Deploy RG Locks
+        displayName: Resource Group Locks ${{parameters.location}}
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >
+            az deployment ${{parameters.scope}} create 
+            --name ${{parameters.resourceType}}$(deployDate)
+            --resource-group ${{variables.securityGroup}}
+            --template-file Deployment/bicep-templates/resourceGroups/${{parameters.resourceType}}.bicep 
+            --parameters Deployment/bicep-templates/resourceGroups/resourceGroups.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "rgPrefix="${{variables.rgPrefix}}

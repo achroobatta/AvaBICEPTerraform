@@ -1,0 +1,37 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "actionGroupsObject": {
+            "value": { 
+                "actionGroups":[
+                    {
+                        "name" : "emailReceiver",
+                        "smsReceivers":[],
+                        "emailReceivers": [
+                            {
+                                "emailAddress": "adrian.brooks@avanoso.com",
+                                "name": "Adrian Brooks"
+                            },
+                            {
+                                "emailAddress": "a.mcgregor@avanoso.com",
+                                "name": "Andrew McGregor"
+                            }
+                        ]
+                    },
+                    {
+                        "name" : "smsReceiver",
+                        "emailReceivers": [],
+                        "smsReceivers": [
+                            {
+                                "countryCode": "61",
+                                "name": "Andrew McGregor",
+                                "phoneNumber": "0435711995"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

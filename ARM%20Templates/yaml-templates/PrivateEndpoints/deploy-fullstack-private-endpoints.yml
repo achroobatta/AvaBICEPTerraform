@@ -1,0 +1,64 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: resourceSelection
+    type: string
+  - name: endpointName
+    type: string
+  - name: storageSubresource
+    type: string
+  - name: resourceName
+    type: string
+
+steps:
+- template: ../StorageAccount/deploy-storage-account.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-storageAccountName ${{parameters.resourceName}}'
+
+- template: ../VirtualNetwork/components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: ../VirtualNetwork/components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -addressPrefix "${{parameters.subnetPrefix}}"'
+
+- template: deploy-private-endpoints.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters:
+      -vnetName ${{parameters.vnetName}}
+      -subnetName ${{parameters.subnetName}}
+      -resourceSelection "${{parameters.resourceSelection}}"
+      -resourceName ${{parameters.resourceName}}
+      -endpointName ${{parameters.endpointName}}
+      -storageSubresource ${{parameters.storageSubresource}}

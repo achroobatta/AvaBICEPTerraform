@@ -1,0 +1,39 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: pathToTemplate
+    type: string
+    default: 'Modules/VirtualMachineWindows'
+  - name: templateName
+    type: string
+    default: 'windows-vm.json'
+  - name: parameterFileName
+    type: string
+    default: 'windows-vm.parameters.json'  
+  - name: overrideParameters
+    type: string
+    default: ''
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template Deploy a Windows Virtual Machine'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: ${{ parameters.serviceConnection }}
+    subscriptionId: ${{ parameters.subscriptionId }}
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: ${{ parameters.resourceGroupName }}
+    location: ${{ parameters.location }}
+    templateLocation: 'Linked artifact'
+    csmFile: '${{parameters.pathToTemplate}}/${{parameters.templateName}}'
+    overrideParameters: '${{ parameters.overrideParameters }}'
+    deploymentMode: 'Incremental'
+    ${{ if ne(length(parameters.parameterFileName), 0) }}:
+      csmParametersFile: '${{parameters.pathToTemplate}}/${{parameters.parameterFileName}}'
+    

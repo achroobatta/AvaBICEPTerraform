@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "skuName": {
+            "value": "Standard_Medium"
+        },
+        "capacity": {
+            "value": 2
+        },
+        "backendIPAddresses": {
+            "value": [
+              {
+                "IpAddress": "10.2.1.10"
+              },
+              {
+                "IpAddress": "10.2.1.11"
+              }
+            ]
+          },
+        "location": {
+            "value": "australiaeast" 
+        },
+        "appGatewayName": {
+            "value": "vbAGWtest"
+        },
+        "vnetName": {
+            "value": ""
+        },
+        "subnetName": {
+            "value": ""
+        },
+        "pubIPName": {
+            "value": ""
+        }
+    }
+}

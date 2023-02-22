@@ -1,0 +1,49 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: overrideParameters
+    type: string
+    default: ''
+
+steps:
+- template: ../NetworkSecurityGroups/deploy-nsg-default.yml
+  parameters:
+    serviceConnection: $(serviceConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(resourceLocation)
+    nsgName: $(nsgName)
+
+- template: ../VirtualNetwork/deploy-vnet-default.yml
+  parameters:
+    serviceConnection: $(serviceConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(resourceLocation)
+    vnetName: $(vm-vnetName)
+    subnetName: $(vm-subnetName)
+    vnetPrefixes: $(vnetPrefix)
+    subnetPrefix: $(subnetPrefix)
+    nicName: $(vm-nicName)
+
+- template: deploy-virtualmachine-windows.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: ${{parameters.overrideParameters}}

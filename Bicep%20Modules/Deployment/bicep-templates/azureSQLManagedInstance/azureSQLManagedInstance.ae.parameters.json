@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "Australia East"
+    },
+    "addressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "subnetName": {
+      "value": "ManagedInstance"
+    },
+    "subnetPrefix": {
+      "value": "10.0.0.0/24"
+    },
+    "networkSecurityGroupName": {
+      "value": "SQLMI-NSG"
+    },
+    "miName": {
+      "value": "avasqlmi"
+    },
+    "skuName": {
+      "value": "GP_Gen5"
+    },
+    "administratorLogin": {
+      "value": "avaadmin"
+    },
+    "administratorLoginPassword": {
+      "value": "Password@123#"
+    },
+    "storageSizeInGB": {
+      "value": 256
+    },
+    "virtualNetworkName": {
+      "value": "SQLMI-VNET"
+    },
+    "vCores": {
+      "value": 8
+    },
+    "licenseType": {
+      "value": "LicenseIncluded"
+    },
+    "routeTableName": {
+      "value": "avatestroute"
+    }
+  }
+}

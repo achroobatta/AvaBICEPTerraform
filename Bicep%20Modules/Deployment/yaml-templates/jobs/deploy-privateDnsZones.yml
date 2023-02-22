@@ -1,0 +1,64 @@
+  parameters:
+  - name: serviceConnection
+    type: string
+  - name: hubServiceConnection
+    type: string
+  - name: environmentType
+    type: string
+  - name: vgs
+    type: string
+  - name: resourceType
+    type: string
+  - name: job
+    type: string
+  - name: scope
+    type: string
+  - name: jobDependsOn
+    type: string
+  - name: location
+    type: string
+  - name: spokeIndex
+    type: string
+    default: ''
+
+  jobs:
+    - job: ${{parameters.job}}
+      dependsOn: ${{parameters.jobDependsOn}}
+      variables:
+        - template: ${{parameters.vgs}} # contains the naming standard & global variables
+          parameters:
+            environmentType: ${{parameters.environmentType}} #environment override
+            location: ${{parameters.location}} # environment override
+            spokeIndex: ${{parameters.spokeIndex}} # Spoke numeric identifier
+      steps: 
+      - template: ../steps/get-subscriptions.yml
+        parameters:
+          serviceConnection: ${{parameters.serviceConnection}}
+          hubServiceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+
+      - task: AzureCLI@2 # PrivateDNSZones
+        displayName: Build ${{parameters.resourceType}} Private DNS Zones
+        inputs:
+          azureSubscription: ${{parameters.serviceConnection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: >
+            az account set --subscription $(hubSubscriptionTask.hubSubscription) &&
+            az deployment ${{parameters.scope}} create 
+            --name "privateDNSZones"$(deployDate)
+            --resource-group ${{variables.networkGroup}}
+            --template-file Deployment/bicep-templates/${{parameters.resourceType}}/${{parameters.resourceType}}.bicep 
+            --parameters Deployment/bicep-templates/${{parameters.resourceType}}/${{parameters.resourceType}}.${{variables.locationCode}}${{variables.spokePath}}.parameters.json
+            --parameters "privateDnsZonePrefix="${{variables.privateDnsZonePrefix}}
+            --parameters "networkGroup="${{variables.networkGroup}}
+
+
+# Example from developer computer
+#az deployment group create `
+#    --name "privateDNSZones" `
+#    --resource-group rg-dev-ae-network `
+#    --template-file Deployment/bicep-templates/privateDNS/privateDNS.bicep `
+#    --parameters Deployment/bicep-templates/privateDNS/privateDNS.ae.parameters.json `
+#    --parameters privateDnsZonePrefix="dns-dev-ae-"
+#    --parameters networkGroup="rg-dev-ae-network"

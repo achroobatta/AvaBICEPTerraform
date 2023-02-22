@@ -1,0 +1,47 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "avsObject": {
+            "value": { 
+                "avs":[
+                    {
+                        "name": "adds-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "pki-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "sccm-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "sailpoint-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "privileged-workstations",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "ansible-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    },
+                    {
+                        "name": "accelerate-servers",
+                        "faultDomains": 2,
+                        "updateDomains": 2
+                    }
+                ]
+            }
+        }
+    }
+}

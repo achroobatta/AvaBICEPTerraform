@@ -1,0 +1,179 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "azureFirewallName": {
+        "value": "su-azureFirewall"
+      },
+      "virtualNetworkName": {
+        "value": "su-virtualnetwork"
+      },
+      "applicationRuleCollections": {
+        "value": [
+          {
+            "name": "arnav-allow-rules",
+            "properties": {
+              "priority": 100,
+              "action": {
+                "type": "allow"
+              },
+              "rules": [
+                {
+                  "name": "allow-ase-tags",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "protocols": [
+                    {
+                      "protocolType": "HTTP",
+                      "port": "80"
+                    },
+                    {
+                      "protocolType": "HTTPS",
+                      "port": "443"
+                    }
+                  ],
+                  "fqdnTags": [
+                    "AppServiceEnvironment",
+                    "WindowsUpdate"
+                  ]
+                },
+                {
+                  "name": "allow-management",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "protocols": [
+                    {
+                      "protocolType": "HTTP",
+                      "port": "80"
+                    },
+                    {
+                      "protocolType": "HTTPS",
+                      "port": "443"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "management.azure.com"
+                  ]
+                },
+                {
+                  "name": "allow-something",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "protocols": [
+                    {
+                      "protocolType": "HTTP",
+                      "port": "80"
+                    },
+                    {
+                      "protocolType": "HTTPS",
+                      "port": "443"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "something.azure.com"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "networkRuleCollections": {
+        "value": [
+          {
+            "name": "allow-network-rules",
+            "properties": {
+              "priority": 100,
+              "action": {
+                "type": "allow"
+              },
+              "rules": [
+                {
+                  "name": "allow-cookie",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "123",
+                    "12000"
+                  ],
+                  "protocols": [
+                    "Any"
+                  ]
+                },
+                {
+                  "name": "allow-coffee",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "124",
+                    "12001"
+                  ],
+                  "protocols": [
+                    "Any"
+                  ]
+                },
+                {
+                  "name": "allow-sleep",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "125",
+                    "12002"
+                  ],
+                  "protocols": [
+                    "Any"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "natRuleCollectionsName": {
+          "value": "su-virtualnetwork"
+      },
+      "priority": {
+          "value": 112
+      },
+      "natAction": {
+          "value": "Dnat"
+      },
+      "NATRule": {
+          "value": "DNAT-HTTPS-traffic"
+      },
+      "NATRuleDescription": {
+          "value": "D-NAT all outbound web traffic for inspection"
+      },
+
+      "destinationPorts": {
+          "value": "443"
+      },
+      "DNATprotocols": {
+          "value": "TCP"
+      },
+      "translatedAddress": {
+          "value": "1.2.3.5"
+      },
+      "translatedPort": {
+          "value": "8443"
+      },
+      "DNATsrouceAddress": {
+          "value": "*"
+      }
+    }
+  }

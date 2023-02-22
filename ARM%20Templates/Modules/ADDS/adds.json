@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sku": {
+            "type": "String"
+        },
+        "domainConfigurationType": {
+            "type": "String"
+        },
+        "domainName": {
+            "type": "String",
+            "metadata": {
+                "description": "provide Domain Name"
+            }
+        },
+        "filteredSync": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+               "description": "Location for all resources."
+            }
+        },  
+        "notificationSettings": {
+            "type": "Object"
+        },
+        "subnetName": {
+            "type": "String",
+            "metadata": {
+                "description": "data subnet name in Spoke Vnet"
+            }
+        },
+        "vnetName": {
+            "type": "String",
+             "metadata": {
+                "description": "ADDS VNet name"
+            }
+        }
+    },
+    "variables": {
+        "subnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"                   
+    },
+    "resources": [
+        {
+            "type": "Microsoft.AAD/DomainServices",
+            "apiVersion": "2020-01-01",
+            "name": "[parameters('domainName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "domainName": "[parameters('domainName')]",
+                "filteredSync": "[parameters('filteredSync')]",
+                "domainConfigurationType": "[parameters('domainConfigurationType')]",
+                "notificationSettings": "[parameters('notificationSettings')]",
+                "replicaSets": [
+                    {
+                        "subnetId": "[variables('subnetId')]",
+                        "location": "[parameters('location')]"
+                    }
+                ],
+                "sku": "[parameters('sku')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

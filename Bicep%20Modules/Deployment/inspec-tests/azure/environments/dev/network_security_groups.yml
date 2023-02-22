@@ -1,0 +1,16 @@
+- name: nsg-dev-ae-dc-01
+  resource_group: rg-dev-ae-network
+- name: nsg-dev-ae-exc-01
+  resource_group: rg-dev-ae-network
+- name: nsg-dev-ae-pki-01
+  resource_group: rg-dev-ae-network
+- name: nsg-dev-ae-sailpoint-01
+  resource_group: rg-dev-ae-network
+- name: nsg-dev-ae-sccm-01
+  resource_group: rg-dev-ae-network
+- name: nsg-dev-ase-dc-01
+  resource_group: rg-dev-ase-network
+- name: nsg-dev-ase-pki-01
+  resource_group: rg-dev-ase-network  
+- name: nsg-dev-ase-test-01
+  resource_group: rg-dev-ase-network

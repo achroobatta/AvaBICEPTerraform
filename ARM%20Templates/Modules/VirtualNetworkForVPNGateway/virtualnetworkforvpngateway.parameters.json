@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "australiaeast"
+        },
+        "resourceGroupName": {
+            "value": "su-mochi"
+        },  
+        "vNetParameterArray": {
+            "value": [
+                {
+                    "VnetName": "vpngw-vnet",
+                    "VnetAddressSpace": "10.231.176.0/21",
+                    "Subnets": [
+                        {
+                            "name": "sub01",
+                            "addressPrefix": "10.231.178.0/25",
+                            "networkSecurityGroup": "np-edc-shareddedicated-aks-nsg01"
+                        },
+                        {
+                            "name": "AzureFirewallSubnet",
+                            "addressPrefix": "10.231.179.0/25",
+                            "networkSecurityGroup": null
+                        },
+                        {
+                            "name": "GatewaySubnet",
+                            "addressPrefix": "10.231.180.0/25",
+                            "networkSecurityGroup" : null
+                        }
+                    ]
+                }
+            ]
+        },
+            
+        "NSGParameterArray": {
+            "value": [
+                {
+                    "name": "np-edc-shareddedicated-aks-nsg01",
+                    "SecurityRules": [
+                        {
+                            "name": "AllowInboundSQL",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "10.120.8.0/26",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "1433",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "100"
+                        },
+
+                        {
+                            "name": "AllowInboundOracle",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "10.120.8.0/26",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "1521",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "110"
+                        }
+                    ]
+                },
+                {
+                    "name": "np-edc-shareddedicated-endpoints-nsg01",
+                    "SecurityRules": [
+                        {
+                            "name": "AllowAllInboundSQL",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "10.120.8.0/26",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "1433",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "priority": "100"
+                        }
+                    ]
+                }
+            ]
+        }
+
+
+    }
+}

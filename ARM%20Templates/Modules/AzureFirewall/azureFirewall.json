@@ -1,0 +1,185 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureFirewallName": {
+            "type": "string",
+            "defaultValue": "myfirewalliscool"
+        },
+        "applicationRuleCollections": {
+            "type": "array"
+        },
+        "networkRuleCollections": {
+            "type": "array"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "(required) The name of the virtual network."
+            }
+        },
+        "priority": {
+            "type": "int",
+            "defaultValue": 112,
+            "metadata": {
+                "description": "Priority Value"
+
+            }
+        },
+        "natAction": {
+            "type": "string",
+            "defaultValue": "Dnat",
+            "metadata": {
+                "description": "DNAT action type"
+
+            }
+        },
+        "NATRule": {
+            "type": "string",
+            "defaultValue": "DNAT-HTTPS-traffic",
+            "metadata": {
+                "description": "NAT Rule"
+
+            }
+        },
+        "NATRuleDescription": {
+            "type": "string",
+            "defaultValue": "D-NAT all outbound web traffic for inspection",
+            "metadata": {
+                "description": "NAT Rule Description"
+
+            }
+        },
+        "DNATsrouceAddress": {
+            "type": "string",
+            "defaultValue": "*",
+            "metadata": {
+                "description": "DNAT source address"
+            }
+        },
+        "destinationPorts": {
+            "type": "string",
+            "defaultValue": "443",
+            "metadata": {
+                "description": "destination Ports"
+            }
+        },
+        "DNATprotocols": {
+            "type": "string",
+            "defaultValue": "TCP",
+            "metadata": {
+                "description": "Protocols"
+            }
+        },
+        "translatedAddress": {
+            "type": "string",
+            "defaultValue": "1.2.3.5",
+            "metadata": {
+                "description": "Translated Address"
+            }
+        },
+        "translatedPort": {
+            "type": "string",
+            "defaultValue": "8443",
+            "metadata": {
+                "description": "Translated Port"
+            }
+        },
+        "natRuleCollectionsName": {
+            "type": "string",
+            "defaultValue": "su-virtualnetwork",
+            "metadata": {
+                "description": "(required) The name of the NAT Rule Colections."
+
+            }
+        }
+    },
+    "variables": {
+        "vNetId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
+        "azureFirewallSubnetId": "[concat(variables('vNetId'), '/subnets/AzureFirewallSubnet')]",
+        "azureFirewallPipName": "[concat(parameters('azureFirewallName'), '-pip')]",
+        "azureFirewallPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('azureFirewallPipName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-11-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat('twfw001', uniqueString(resourceGroup().id))]"
+                }
+            }
+        },
+
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Network/azureFirewalls",
+            "name": "[parameters('azureFirewallName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('azureFirewallPipId')]"
+            ],
+            "properties": {
+
+                "threatIntelMode": "Deny",
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('azureFirewallSubnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('azureFirewallPipId')]"
+                            }
+                        }
+                    }
+                ],
+                "applicationRuleCollections": "[parameters('applicationRuleCollections')]",
+                "networkRuleCollections": "[parameters('networkRuleCollections')]",
+                "natRuleCollections": [
+                    {
+                        "name": "[parameters('natRuleCollectionsName')]",
+                        "properties": {
+                            "priority": "[parameters('priority')]",
+                            "action": {
+                                "type": "[parameters('natAction')]"
+                            },
+                            "rules": [
+                                {
+                                    "name": "[concat(parameters('NATRule'))]",
+                                    "description": "[parameters('NATRuleDescription')]",
+                                    "sourceAddresses": [
+                                        "[parameters('DNATsrouceAddress')]"
+                                    ],
+                                    "destinationAddresses": [
+                                        "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))).ipAddress]"
+                                    ],
+
+                                    "destinationPorts": [
+                                        "[parameters('destinationPorts')]"
+                                    ],
+                                    "protocols": [
+                                        "[parameters('DNATprotocols')]"
+                                    ],
+                                    "translatedAddress": "[parameters('translatedAddress')]",
+                                    "translatedPort": "[parameters('translatedPort')]"
+                                }
+                            ]
+                        }
+                    }
+
+
+                ]
+
+            }
+        }
+    ]
+
+}

@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "projectName": {
+            "value": "su-holidays" 
+        },
+        "location": {
+            "value": "australiaeast" 
+        },
+        "linuxVMadminUsername": {
+            "value": "suadmin" 
+        },
+        "linuxVMadminPublicKey": {
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUoB35iNSH1/U67Eg8mumwlqcsPwQQ1ZGacs3MLQQNVkofBesiod/B9BCruE1B/8qljpz7YR78/ZcdKEUbf917eeHaV2/u43pd5/lA1bmr+YTMLBwFbD4dQk/FvWU527+tPXAJFlq/CuHL+LczBzyMU5B7R42py5m7KCiIysWRizGCuB4/eHNlnFTFCEOIpa+x8GwvUTpJxhu0ZdnKrEhCKhTBrtXZRpKu1QIxsaDKp1W8V2QlfjVTY/M7ax93M+WPIn70I04//dW3fVyzRpaQRkSSILhr5Z/i7un96Ycc/sVr/tnJ4P//WZo41hfIbo4DBguxAmwz+n9qbHiypo9ej7U4mQ6xi+5lWmStdZ4KKcPlO7oofOtlYKqM2iIaGS5G5chWKv6c7dtMXClKUuptE8o+oItP369mLwCwutPkaGJmZ2tyLSbYBNm35jqySYKDsMJZO4ySLWTHkmRBBsWZHqIuGNEpz2HatQHYe+3+lWFaVnLRMN2E6+TBsvH4oPU= generated-by-azure" 
+        },
+        "vmSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "deploymentEnvironment" : {
+            "value": "dev"
+        },
+        "nicName" :{
+            "value": "nic"
+        }
+    }
+}

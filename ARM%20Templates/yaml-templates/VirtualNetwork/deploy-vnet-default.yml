@@ -1,0 +1,45 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetPrefixes
+    type: string
+  - name: subnetName
+    type: string
+  - name: subnetPrefix
+    type: string
+  - name: nicName
+    type: string
+
+steps:
+- template: components/deploy-virtualNetwork.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -addressPrefixes ["${{parameters.vnetPrefixes}}"]'
+
+- template: components/deploy-subnet.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}" -addressPrefix "${{parameters.subnetPrefix}}"'
+
+# NIC SHOULD NOT BE CREATED AS HIGH UP AS WITHIN THE VNET+SUBNET PIPELINE, IT SHOULD BE DEPLOYED AS A DEPENDENCY OF THE RESOURCE THAT NEEDS IT.
+#- template: components/deploy-networkInterface.yml
+#  parameters:
+#    serviceConnection: ${{parameters.serviceConnection}}
+#    subscriptionId: ${{parameters.subscriptionId}}
+#    resourceGroupName: ${{parameters.resourceGroupName}}
+#    location: ${{parameters.location}}
+#    overrideParameters: '-nicName "${{parameters.nicName}}" -vnetName "${{parameters.vnetName}}" -subnetName "${{parameters.subnetName}}"'

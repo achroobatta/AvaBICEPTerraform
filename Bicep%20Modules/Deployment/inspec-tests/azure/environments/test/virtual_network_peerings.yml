@@ -1,0 +1,6 @@
+- name: vn-test-ae-hub-01-to-vn-test-ase-hub-01
+  vnet: vn-test-ae-hub-01
+  resource_group: rg-test-ae-network
+- name: vn-test-ase-hub-01-to-vn-test-ae-hub-01
+  vnet: vn-test-ase-hub-01
+  resource_group: rg-test-ase-network

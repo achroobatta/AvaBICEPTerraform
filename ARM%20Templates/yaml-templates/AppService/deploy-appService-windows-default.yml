@@ -1,0 +1,30 @@
+parameters:
+  - name: serviceConnection
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: location
+    type: string
+  - name: aspNameWindows
+    type: string
+  - name: webappNameWindows
+    type: string
+
+steps:
+- template: components/deploy-asp-windows.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-aspName "${{parameters.aspNameWindows}}" -location "${{parameters.location}}"'
+
+- template: components/deploy-appservice-windows.yml
+  parameters:
+    serviceConnection: ${{parameters.serviceConnection}}
+    subscriptionId: ${{parameters.subscriptionId}}
+    resourceGroupName: ${{parameters.resourceGroupName}}
+    location: ${{parameters.location}}
+    overrideParameters: '-aspPortalName "${{parameters.aspNameWindows}}" -webAppName "${{parameters.webappNameWindows}}" -location "${{parameters.location}}"'

@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "policyAssignments": {
+        "type": "array",
+        "defaultvalue": [],
+        "metadata":{
+          "description": "(required) specifies a array with name and Id of policies to resources"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Authorization/policyAssignments",
+        "name": "[parameters('policyAssignments')[copyIndex()].name]",
+        "apiVersion": "2019-09-01",
+        "properties": {
+          "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)]",
+          "policyDefinitionId": "[concat('/providers/Microsoft.Authorization/policyDefinitions','/',parameters('policyAssignments')[copyIndex()].Id)]"
+        },
+        "copy": {
+          "name": "policyCopy",
+          "count": "[length(parameters('policyAssignments'))]"
+        }
+      }
+    ]
+  }

@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyAssignmentObject": {
+            "value":{
+                "policyAssignment":[
+                {
+                    "policyName": "CIS",
+                    "managementGroup": "MG03",
+                    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/612b5213-9160-4969-8578-1518bd2a000c",
+                    "nonComplianceMessage": "Resource is not compliant with CIS benchmark"
+                },
+                {
+                    "policyName": "CIS",
+                    "managementGroup": "MG02",
+                    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/612b5213-9160-4969-8578-1518bd2a000c",
+                    "nonComplianceMessage": "Resource is not compliant with CIS benchmark"
+                },
+                {
+                    "policyName": "ISO27001",
+                    "managementGroup": "MG03",
+                    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2",
+                    "nonComplianceMessage": "Resource is not compliant with ISO 27001"
+                },
+                {
+                    "policyName": "ISO27001",
+                    "managementGroup": "MG02",
+                    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2",
+                    "nonComplianceMessage": "Resource is not compliant with ISO 27001"
+                },
+                {
+                    "policyName": "AllowedResources",
+                    "managementGroup": "MG02",
+                    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/MG02/providers/Microsoft.Authorization/policyDefinitions/Avanoso - Allowed resource types",
+                    "nonComplianceMessage": "Resource is not included in policy for deployment"
+                },
+                {
+                    "policyName": "AllowedRegions",
+                    "managementGroup": "MG02",
+                    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/MG02/providers/Microsoft.Authorization/policyDefinitions/Avanoso - Allow Only AustraliaEast and AustraliaEast Resources",
+                    "nonComplianceMessage": "Resource is not included in policy for deployment"
+                }
+                ]
+            }
+
+        }
+    }
+}
+
+  

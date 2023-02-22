@@ -1,0 +1,22 @@
+{
+    "$Schema":  "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$contentVersion":  "1.0.0.0",
+    "parameters":  {
+        "vnetPeeringObject": {
+            "value": { 
+                "vnetPeering":[
+                    {
+                        "spokeVirtualNetworkName": "sp1-ase-spoke-01",
+                        "spokeVirtualNetworkGroup": "sp1-ase-network",
+                        "hubVirtualNetworkName": "ae-hub-01",
+                        "hubVirtualNetworkGroup": "ae-network",
+                        "allowVirtualNetworkAccess": true,
+                        "allowForwardedTraffic": true,
+                        "allowGatewayTransit": true,
+                        "useRemoteGateways": false
+                    }
+                ]
+            }
+        }
+    }
+}

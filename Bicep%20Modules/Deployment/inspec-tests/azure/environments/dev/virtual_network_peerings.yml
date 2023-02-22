@@ -1,0 +1,6 @@
+- name: vn-dev-ae-hub-01-to-vn-dev-ase-hub-01
+  vnet: vn-dev-ae-hub-01
+  resource_group: rg-dev-ae-network
+- name: vn-dev-ase-hub-01-to-vn-dev-ae-hub-01
+  vnet: vn-dev-ase-hub-01
+  resource_group: rg-dev-ase-network

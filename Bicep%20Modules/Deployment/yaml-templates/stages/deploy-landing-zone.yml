@@ -1,0 +1,160 @@
+parameters:
+- name: environmentType
+  type: string
+- name: hubServiceConnection
+  type: string
+- name: stageName
+  type: string
+- name: serviceConnection
+  type: object
+ 
+stages:
+  - stage: ${{parameters.stageName}}
+    condition: and(or(not(eq('${{ parameters.environmentType }}', 'prod')), eq(variables['Build.SourceBranch'], 'refs/heads/master')),succeeded())
+    jobs:
+    - ${{ each subscription in parameters.serviceConnection }}:
+      # Resource Groups
+      - template: ../jobs/deploy-resourceGroups.yml #Australia East
+        parameters:
+          serviceConnection: ${{subscription.value}}
+          environmentType: ${{parameters.environmentType}} 
+          vgs: ../vgs/global.yml
+          resourceType: resourceGroups
+          job: ${{parameters.stageName}}_RGs_ae_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: sub
+          spokeIndex: ${{subscription.spokeIndex}}
+      - template: ../jobs/deploy-security.yml 
+        parameters:
+          serviceConnection: ${{subscription.value}}
+          environmentType: ${{parameters.environmentType}} 
+          vgs: ../vgs/global.yml
+          resourceType: security
+          job: ${{parameters.stageName}}_security_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: sub
+      - template: ../jobs/deploy-resourceGroups.yml #Australia SouthEast
+        parameters:
+          serviceConnection: ${{subscription.value}}
+          environmentType: ${{parameters.environmentType}} 
+          vgs: ../vgs/global.yml
+          resourceType: resourceGroups
+          job: ${{parameters.stageName}}_RGs_ase_spoke${{subscription.spokeIndex}}
+          location: AustraliaSouthEast
+          scope: sub
+          spokeIndex: ${{subscription.spokeIndex}}
+      # Storage Accounts
+      - template: ../jobs/deploy-storageAccounts.yml  #Australia East
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_ae_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: storageAccounts
+          job: ${{parameters.stageName}}_SAs_ae_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      - template: ../jobs/deploy-storageAccounts.yml #Australia SouthEast
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_ase_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: storageAccounts
+          job: ${{parameters.stageName}}_SAs_ase_spoke${{subscription.spokeIndex}}
+          location: AustraliaSouthEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      #Keyvaults
+      - template: ../jobs/deploy-keyVaults.yml #Australia East
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_ae_spoke${{subscription.spokeIndex}}
+          #jobDependsOn: ${{parameters.stageName}}_SAs_ae_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: keyVaults
+          job: ${{parameters.stageName}}_KVs_ae_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      - template: ../jobs/deploy-keyVaults.yml #Australia SouthEast
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_SAs_ase_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: keyVaults
+          job: ${{parameters.stageName}}_KVs_ase_spoke${{subscription.spokeIndex}}
+          location: AustraliaSouthEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      # Public IP Addresses
+      - template: ../jobs/deploy-publicIpAddresses.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_RGs_ae_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: publicIpAddresses
+          job: ${{parameters.stageName}}_PIPs_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      # Virtual Networks
+      - template: ../jobs/deploy-virtualNetworks.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_KVs_ae_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: virtualNetworks
+          job: ${{parameters.stageName}}_VNs_ae_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      - template: ../jobs/deploy-virtualNetworks.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_KVs_ase_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: virtualNetworks
+          job: ${{parameters.stageName}}_VNs_ase_spoke${{subscription.spokeIndex}}
+          location: AustraliaSouthEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      # Bastion
+      - template: ../jobs/deploy-bastions.yml
+        parameters:
+          jobDependsOn: ${{parameters.stageName}}_VNs_ae_spoke${{subscription.spokeIndex}}
+          serviceConnection: ${{subscription.value}}
+          hubserviceConnection: ${{parameters.hubServiceConnection}}
+          environmentType: ${{parameters.environmentType}}
+          vgs: ../vgs/global.yml
+          resourceType: bastionHosts
+          job: ${{parameters.stageName}}_bastionHosts_ae_spoke${{subscription.spokeIndex}}
+          location: AustraliaEast
+          scope: group
+          spokeIndex: ${{subscription.spokeIndex}}
+      # #Virtual Machines
+      # - template: ../jobs/deploy-virtualMachines.yml
+      #   parameters:
+      #     jobDependsOn: ${{parameters.stageName}}_VNs_ae_spoke${{subscription.spokeIndex}}
+      #     serviceConnection: ${{subscription.value}}
+      #     hubserviceConnection: ${{parameters.hubServiceConnection}}
+      #     environmentType: ${{parameters.environmentType}}
+      #     vgs: ../vgs/global.yml
+      #     resourceType: virtualMachines
+      #     job: ${{parameters.stageName}}_VMs_ae_spoke${{subscription.spokeIndex}}
+      #     location: AustraliaEast
+      #     scope: group
+      #     spokeIndex: ${{subscription.spokeIndex}}

@@ -1,0 +1,5 @@
+- name: kv-prod-ae-sec-01
+  resource_group: rg-prod-ae-security
+- name: kv-prod-ase-sec-01
+  resource_group: rg-prod-ase-security
+

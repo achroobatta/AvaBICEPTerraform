@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nicName": {
+            "value": "xxxx"
+        },
+        "location": {
+            "value": ""
+        },
+        "privateIPAddress": {
+            "value": ""
+        },
+        "privateIPAllocationMethod": {
+            "value": "Dynamic"
+        },
+        "primary": {
+            "value": true
+        },
+        "privateIPAddressVersion": {
+            "value": "IPv4"
+        },
+        "dnsServers": {
+            "value": []
+        },
+        "internalDnsNameLabel": {
+            "value": ""
+        },
+        "enableAcceleratedNetworking": {
+            "value": false
+        },
+        "enableIPForwarding": {
+            "value": false
+        },
+        "tags_CreationDate": {
+            "value": ""
+        },
+        "tags_Environment": {
+            "value": "Dev"
+        },
+        "tags": {
+            "value": {}
+        },
+        "pubIPName": {
+            "value": ""
+        },
+        "vnetName": {
+            "value": ""
+        },
+        "subnetName": {
+            "value": ""
+        },
+        "nsgName": {
+            "value": ""
+        }
+    }
+}

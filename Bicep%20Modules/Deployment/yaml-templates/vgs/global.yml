@@ -1,0 +1,193 @@
+## This file encodes the naming standard 
+# Also sets global paramaters such as primary site
+parameters:
+  - name: environmentType
+    type: string
+  - name: location
+    type: string
+  - name: spokeIndex
+    type: string
+    default: ''
+    
+variables:
+  - name: locationCode
+    ${{ if eq(parameters.location, 'AustraliaEast') }}:
+      value: ae
+    ${{ if eq(parameters.location, 'AustraliaSouthEast') }}:
+      value: ase
+  - name: spokeName
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: sp${{parameters.spokeIndex}}
+    ${{else}}: # else this is the hub
+      value: ''
+  - name: spokePath #used for addressing bicep variables file
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: .${{variables.spokeName}}
+    ${{else}}: # else this is the hub
+      value: ''
+  - name: suffix
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: ${{ parameters.environmentType }}-${{ variables.spokeName }}-${{ variables.locationCode }}-
+    ${{else }}:
+      value: ${{ parameters.environmentType }}-${{ variables.locationCode }}-
+
+  - name: primarySite
+    value: ae  # the site used for log analytics workspace
+    readonly: true
+  - name: securityGroupSuffix
+    value: security
+    readonly: true
+  - name: storageGroupSuffix
+    value: storage
+    readonly: true
+  - name: networkGroupSuffix
+    value: network
+    readonly: true
+  - name: computeGroupSuffix
+    value: compute
+    readonly: true
+  - name: appGatwayRGSuffix
+    value: appgateway
+    readonly: true
+# Service Names
+  - name: rgPrefix
+    value: rg-${{ variables.suffix }}
+    readonly: true
+  - name: bstPrefix
+    value: bst-${{ variables.suffix }}
+    readonly: true
+  - name: dcrPrefix
+    value: dcr-${{ variables.suffix }}
+    readonly: true
+  - name: nsgPrefix
+    value: nsg-${{ variables.suffix }}
+    readonly: true
+  - name: asgPrefix
+    value: asg-${{ variables.suffix }}
+    readonly: true
+  - name: flPrefix
+    value: fl-${{ variables.suffix }}
+    readonly: true
+  - name: avsPrefix
+    value: avs-${{ variables.suffix }}
+    readonly: true
+  - name: fwPrefix
+    value: fw-${{ variables.suffix }}
+    readonly: true
+  - name: fwpPrefix
+    value: fwp-${{ variables.suffix }}
+    readonly: true
+  - name: udrPrefix
+    value: udr-${{ variables.suffix }}
+    readonly: true
+  - name: kvPrefix
+    value: kv-${{ variables.suffix }}
+    readonly: true
+  - name: vnPrefix
+    value: vn-${{ variables.suffix }}
+    readonly: true
+  - name: wsPrefix
+    value: ws-${{ variables.suffix }}
+    readonly: true
+  - name: pipPrefix
+    value: pip-${{ variables.suffix }}
+    readonly: true
+  - name: rtPrefix
+    value: rt-${{ variables.suffix }}
+    readonly: true
+  - name: snPrefix
+    value: sn-${{ variables.suffix }}
+    readonly: true
+  - name: vgwPrefix
+    value: vgw-${{ variables.suffix }}
+    readonly: true
+  - name: privateDnsZonePrefix
+    value: dns-${{ variables.suffix }}
+    readonly: true
+  - name: pepPrefix
+    value: pep-${{ variables.suffix }}
+    readonly: true
+  - name: aspPrefix
+    value: asp-${{ variables.suffix }}
+    readonly: true
+  - name: asPrefix
+    value: as-${{ variables.suffix }}
+    readonly: true
+  - name: appiPrefix
+    value: appi-${{ variables.suffix }}
+    readonly: true
+
+# Exceptions to naming convention due to limitations in the resource
+  - name: saPrefix
+    value: sa${{ parameters.environmentType }}${{ variables.spokeName }}${{ variables.locationCode }} # removed all dashes etc
+    readonly: true
+  - name: vmPrefix
+    value: vm${{ parameters.environmentType }}${{ variables.locationCode }} # does not use spoke name 
+    readonly: true
+
+# Global variables - Centralised logging in variables.primarySite
+# Same for all resources in hub and spokes
+  - name: workspaceNameSuffix
+    value: ${{variables.primarySite}}-monitor-01
+    readonly: true
+  - name: workspaceGroupSuffix
+    value: ${{variables.primarySite}}-security
+    readonly: true
+  - name: workspaceName
+    value: ws-${{ parameters.environmentType }}-${{ variables.workspaceNameSuffix }}
+    readonly: true
+    #TODO change to monitoringGroup
+  - name: workspaceGroup
+    value: rg-${{ parameters.environmentType }}-${{ variables.workspaceGroupSuffix }}
+    readonly: true
+  - name: dataCollectionPrefix
+    value: dcr-${{ parameters.environmentType }}-${{variables.primarySite}}-
+    readonly: true
+# Region specific variables - Resource Group Names
+# Also dependent on wether resource is a hub or a spoke
+  - name: securityGroup
+    value: ${{ variables.rgPrefix }}${{ variables.securityGroupSuffix }}
+    readonly: true
+  - name: storageGroup
+    value: ${{ variables.rgPrefix }}${{ variables.storageGroupSuffix }}
+    readonly: true
+  - name: networkGroup
+    value: ${{ variables.rgPrefix }}${{ variables.networkGroupSuffix }}
+    readonly: true
+  - name: computeGroup
+    value: ${{ variables.rgPrefix }}${{ variables.computeGroupSuffix }}
+    readonly: true
+  - name: appGatwayRG
+    value: ${{ variables.rgPrefix }}${{ variables.appGatwayRGSuffix }}
+    readonly: true
+# Logging
+# Also dependent on wether resource is a hub or a spoke
+  - name: loggingStorageGroupSuffix
+    value: ${{ variables.locationCode }}-storage
+    readonly: true
+  - name: loggingStorageAccountNameSuffix
+    value: ${{ variables.locationCode }}diags02
+    readonly: true
+  - name: loggingStorageAccountGroup
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: rg-${{ parameters.environmentType }}-${{ variables.spokeName }}-${{ variables.loggingStorageGroupSuffix }}
+    ${{else}}: 
+      value: rg-${{ parameters.environmentType }}-${{ variables.loggingStorageGroupSuffix }}
+  - name: loggingStorageAccountName
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: sa${{ parameters.environmentType }}${{ variables.spokeName }}${{ variables.loggingStorageAccountNameSuffix }}
+    ${{else}}:
+      value: sa${{ parameters.environmentType }}${{ variables.loggingStorageAccountNameSuffix }} # removed all dashes etc
+      
+# Admin credentials
+# Also dependent on wether resource is a hub or a spoke
+  - name: keyvaultAdminCredsuffix
+    value: ${{ variables.locationCode }}-sec-15
+    readonly: true
+  - name: keyvaultAdminCreds
+    ${{ if ne(parameters.spokeIndex,'') }}:
+      value: kv-${{ parameters.environmentType }}-${{ variables.spokeName }}-${{ variables.keyvaultAdminCredsuffix }}
+    ${{else}}:
+      value:  kv-${{ parameters.environmentType }}-${{ variables.keyvaultAdminCredsuffix }}
+     
+
